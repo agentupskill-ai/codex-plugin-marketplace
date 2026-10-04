@@ -1,0 +1,6 @@
+{
+  "name": "agentupskill",
+  "version": "0.2.0",
+  "description": "Verify your Agent Upskill connection in Codex.",
+  "skills": "./skills/"
+}

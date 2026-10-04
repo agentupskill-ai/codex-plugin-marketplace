@@ -1,0 +1,20 @@
+{
+  "name": "agentupskill-setup",
+  "interface": {
+    "displayName": "Agent Upskill Setup"
+  },
+  "plugins": [
+    {
+      "name": "agentupskill",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agentupskill"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
