@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "agentupskill-connect": {
+    "agentupskill-bundled-connect": {
       "type": "http",
       "url": "https://app.agentupskill.ai/mcp"
     }

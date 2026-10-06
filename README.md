@@ -1,7 +1,7 @@
 # Agent Upskill connection plugin
 
 A Codex marketplace bundling the Agent Upskill MCP connector and connection skill.
-Version: 0.3.0. Marketplace: agentupskill-setup. Plugin: agentupskill.
+Version: 0.3.1. Marketplace: agentupskill-setup. Plugin: agentupskill.
 
 Start from your signed-in Agent Upskill setup page and choose **Set up in Codex**.
 Send the prepared request, review installation and complete browser sign-in.
