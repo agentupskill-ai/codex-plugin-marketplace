@@ -6,8 +6,8 @@ description: Bring saved Agent Upskill Individual context into a new or ongoing 
 Use the agentupskill-bundled-connect MCP connector bundled with this plugin.
 Discover its actual registered name; stop if a host or project entry shadows it.
 Preserve other connectors and credentials. If the required tools are unavailable,
-sign in using codex mcp login <registered name> --scopes memory:identity memory:read memory:write
-for save, or --scopes memory:identity memory:read for sync. Let the user choose
+sign in using codex mcp login <registered name> --scopes memory:identity,memory:read,memory:write
+for save, or --scopes memory:identity,memory:read for sync. Let the user choose
 their account and approve the browser consent. Do not approve it for them.
 Do not request permission-management, lifecycle or Skills scopes. Discover the
 tools again after login; if they remain unavailable, report that result. Never
