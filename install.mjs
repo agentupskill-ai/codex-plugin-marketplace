@@ -8,8 +8,8 @@ import {isDeepStrictEqual} from 'node:util';
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
 const pluginId='agentupskill@'+name;
-const version='0.4.1';
-const expected={
+export const version='0.4.1';
+export const expected={
   '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'agentupskill',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
   'plugins/agentupskill/.codex-plugin/plugin.json':{name:'agentupskill',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json'},
   'plugins/agentupskill/.mcp.json':{mcpServers:{'agentupskill-bundled-connect':{type:'http',url:'https://app.agentupskill.ai/mcp'}}}
@@ -36,7 +36,9 @@ function marketplace(ref) {
   if(matches.length>1)throw new Error('Conflicting Agent Upskill marketplaces. Review them in Codex before retrying.');
   const entry=matches[0];
   if(!entry)return null;
-  if(entry.marketplaceSource?.sourceType!=='git' || entry.marketplaceSource.source?.replace(/\.git$/,'')!==source || typeof entry.root!=='string')throw new Error('The Agent Upskill marketplace has a different source. Nothing was replaced; review it in Codex.');
+  const registeredSource=entry.marketplaceSource?.source;
+  const normalizedSource=typeof registeredSource==='string'?registeredSource.replace(/\/$/,'').replace(/\.git$/,''):null;
+  if(entry.marketplaceSource?.sourceType!=='git' || normalizedSource!==source || typeof entry.root!=='string')throw new Error('The Agent Upskill marketplace source does not match the reviewed HTTPS URL. Nothing was replaced; review it in Codex.');
   if(command('git',['-C',entry.root,'rev-parse','HEAD']).trim()!==ref)throw new Error('The Agent Upskill marketplace has a different commit. Nothing was replaced; use Codex’s native update controls after reviewing the new version.');
   if(command('git',['-C',entry.root,'status','--porcelain','--untracked-files=normal']).trim())throw new Error('The marketplace checkout has local changes. Nothing was replaced; review those changes before retrying.');
   for(const [path,value] of Object.entries(expected)){
