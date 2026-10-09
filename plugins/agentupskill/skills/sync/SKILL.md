@@ -21,6 +21,10 @@ First call memory_index with a useful literal focus when the user named a topic.
 Review the compact titles, session IDs, last save times, revisions and estimated
 reading cost. Follow its pagination when needed; an index alone is not loaded
 context. Select the project brief and full current notes relevant to the request.
+Include relevant living documents and the structured item catalog. Review the index's
+current dependency/expiry warnings, even when an unchanged document was already
+acknowledged: its linked facts may have changed without rewriting its authored text.
+These are review flags, not automatic acceptance reversals or operational status.
 Call sync with the actual conversationId, selected paths and the index sourceCommit.
 If the source has changed, refresh the index and select again. Use fresh: true when prior received content has been lost
 through compaction or when the user requests a full refresh. Normal sync tracks
