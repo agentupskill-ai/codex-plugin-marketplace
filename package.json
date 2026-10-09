@@ -1,0 +1,17 @@
+{
+  "name": "@agentupskill/codex-plugin-install",
+  "version": "0.4.1",
+  "type": "module",
+  "bin": {
+    "agentupskill-install": "./install.mjs"
+  },
+  "engines": {
+    "node": ">=22.17"
+  },
+  "files": [
+    "install.mjs",
+    ".agents/",
+    "plugins/",
+    "README.md"
+  ]
+}

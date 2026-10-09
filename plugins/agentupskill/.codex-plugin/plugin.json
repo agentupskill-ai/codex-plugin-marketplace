@@ -1,7 +1,7 @@
 {
   "name": "agentupskill",
-  "version": "0.3.1",
-  "description": "Connect and verify Agent Upskill in one Codex chat.",
+  "version": "0.4.1",
+  "description": "Connect Agent Upskill and carry useful context between Codex conversations.",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json"
 }
