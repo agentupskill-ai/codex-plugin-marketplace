@@ -54,7 +54,13 @@ authority; it is your assertion, not service authentication or permission to act
 Use reported for a saved approval claim whose underlying authority was not checked.
 Scope is not a permission grant. Expiry and review dates have different meanings.
 
-session_context returns current structured records and their exact contentHash.
+session_context returns compact current structured identity/path/revision/hash metadata,
+not their bodies. Fetch needed full catalog/documents using sync with selected paths,
+that sourceCommit and an adequate budget; read every complete document before sync_ack.
+Use fresh only if an already acknowledged body is unavailable in your current context;
+fresh deliberately resets this conversation's receipt baseline. Never upsert from
+metadata alone. Index review notices are capped with reviewCount/reviewTruncated;
+inspect full linked records before applying changes.
 Reuse existing item IDs for corrections across conversations, retaining relevant
 provenance, rationale and relationships in the complete replacement value. New
 items omit id; the platform returns opaque IDs in savedArtifacts. An item upsert
