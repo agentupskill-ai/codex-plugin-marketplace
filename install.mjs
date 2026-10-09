@@ -7,11 +7,11 @@ import {isDeepStrictEqual} from 'node:util';
 
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
-const pluginId='agentupskill@'+name;
-export const version='0.5.0';
+const pluginId='up@'+name;
+export const version='0.6.0';
 export const expected={
-  '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'agentupskill',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
-  'plugins/agentupskill/.codex-plugin/plugin.json':{name:'agentupskill',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json'},
+  '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'up',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
+  'plugins/agentupskill/.codex-plugin/plugin.json':{name:'up',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json'},
   'plugins/agentupskill/.mcp.json':{mcpServers:{'agentupskill-bundled-connect':{type:'http',url:'https://app.agentupskill.ai/mcp'}}}
 };
 
@@ -51,6 +51,7 @@ function marketplace(ref) {
 function installed() {
   const result=json(['plugin','list','--marketplace',name,'--json']);
   if(!Array.isArray(result.installed))throw new Error('Unsupported Codex plugin response. Update Codex and retry.');
+  if(result.installed.some(entry=>entry.pluginId==='agentupskill@'+name && entry.installed===true))throw new Error('The legacy agentupskill plugin is installed. Review a native rename migration to up before retrying; nothing was replaced or duplicated. Preserve the existing connector and credentials.');
   const matches=result.installed.filter(entry=>entry.pluginId===pluginId);
   if(matches.length>1)throw new Error('Conflicting Agent Upskill installations. Review them in Codex.');
   const entry=matches[0];

@@ -5,7 +5,7 @@ the user's prepared request. Retrieve files from that exact commit read-only
 before changing installation or configuration: the marketplace, plugin manifest,
 MCP manifest, this skill and reference, package.json and install.mjs. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin agentupskill v0.5.0,
+marketplace is agentupskill-setup, plugin up v0.6.0,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
 There must be no plugin hooks, credential fields or account data. The standalone
@@ -28,9 +28,12 @@ Replace the placeholders only with the reviewed source and commit. The wrapper
 checks metadata and preserves completed steps using native Codex commands.
 If Node/npm is unavailable, use the same native commands directly after the same
 checks: codex plugin marketplace add <source> --ref <reviewed commit>, then
-codex plugin add agentupskill@agentupskill-setup. Do not make the customer run
-Terminal commands or download a ZIP. A different installed version needs reviewed
-native update controls, not removal, reinstallation or credential resets.
+codex plugin add up@agentupskill-setup. Do not make the customer run
+Terminal commands or download a ZIP. An existing agentupskill@agentupskill-setup installation needs a reviewed native
+rename migration before installing up@agentupskill-setup. Stop instead of adding a
+second copy of its connector. Preserve the installed plugin and credentials.
+A different installed version needs reviewed native update controls, not removal,
+reinstallation or credential resets.
 
 Discover the actual registered name of the plugin's bundled connector; do not
 require or invent a plugin prefix. Check that no host or project MCP entry shadows

@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "agentupskill",
+      "name": "up",
       "source": {
         "source": "local",
         "path": "./plugins/agentupskill"
