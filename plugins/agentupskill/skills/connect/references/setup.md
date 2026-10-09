@@ -5,7 +5,7 @@ the user's prepared request. Retrieve files from that exact commit read-only
 before changing installation or configuration: the marketplace, plugin manifest,
 MCP manifest, this skill and reference, package.json and install.mjs. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin agentupskill v0.4.1,
+marketplace is agentupskill-setup, plugin agentupskill v0.5.0,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
 There must be no plugin hooks, credential fields or account data. The standalone
