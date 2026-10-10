@@ -1,7 +1,7 @@
 # Agent Upskill connection plugin
 
 A Codex marketplace bundling the Agent Upskill MCP connector and connect, save and sync skills.
-Version: 0.6.0. Marketplace: agentupskill-setup. Plugin: up.
+Version: 0.7.0. Marketplace: agentupskill-setup. Plugin: up.
 Commands: up:connect, up:save and up:sync.
 
 Start from your signed-in Agent Upskill setup page and choose **Set up in Codex**.
@@ -10,8 +10,8 @@ Keep using that same chat: it verifies connectivity automatically.
 No ZIP download, customer Terminal commands or additional setup chats are required.
 
 The connector uses Streamable HTTP at https://app.agentupskill.ai/mcp.
-Authentication is ON_USE. Initial setup requests only memory:identity.
-Saving requests memory:identity, memory:read and memory:write through separate browser consent.
+Authentication is ON_USE. Initial Individual setup requests Memory identity/read/write and Skills identity/read/write in one browser consent. Narrower grants remain supported.
+Saving uses the current Memory read/write grant; missing access requires explicit browser consent.
 Syncing needs memory:identity and memory:read. Let the user choose their account and approve access.
 Explicit saves publish cumulative notes immediately and retain earlier revisions.
 Do not create a separate host MCP entry. Installing the plugin grants no service

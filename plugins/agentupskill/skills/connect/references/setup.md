@@ -5,7 +5,7 @@ the user's prepared request. Retrieve files from that exact commit read-only
 before changing installation or configuration: the marketplace, plugin manifest,
 MCP manifest, this skill and reference, package.json and install.mjs. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin up v0.6.0,
+marketplace is agentupskill-setup, plugin up v0.7.0,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
 There must be no plugin hooks, credential fields or account data. The standalone
@@ -15,8 +15,8 @@ configuration without exposing credentials. Stop on conflicting source, commit,
 version or connection. Preserve other marketplaces, plugins and credentials.
 
 Before any install or login, present one combined approval: the exact source,
-commit and version; registration/install only if needed; identity-only sign-in
-with memory:identity at the bundled endpoint; the account the user will select in
+commit and version; registration/install only if needed; combined Individual sign-in
+with Memory identity/read/write and Skills identity/read/write at the bundled endpoint; the account the user will select in
 the browser; and verification with their current code in this same chat. End:
 Reply "approve" to continue. This covers those setup actions, not changed scope,
 Codex execution permissions or browser consent. Do not ask the user to compose a
@@ -41,10 +41,12 @@ that name, even if disabled. Preserve older differently named standalone entries
 Do not create a host/project entry, duplicate a connection, edit global config or
 silently migrate a collision. Explain the exact conflict and stop.
 
-Use codex mcp login <the registered name> --scopes memory:identity before a
-bundled tool call if identity sign-in is needed. Never use unscoped automatic login.
-Stop if browser consent requests read, write, lifecycle, permissions or Skills
-access. Let the user select the setup-page email and Individual, and approve
+Use codex mcp login <the registered name> --scopes memory:identity,memory:read,memory:write,skills:identity,skills:read,skills:write before a
+bundled tool call when sign-in or the full setup grant is missing. Existing narrower
+grants require fresh browser consent; token refresh never expands access. Preserve an
+existing full setup grant. Never use unscoped automatic login.
+Stop if browser consent requests Memory lifecycle, permission management or access
+beyond the six named scopes. Let the user select the setup-page email and Individual, and approve
 consent themselves. Do not collect credentials or approve on their behalf.
 Return to the connect skill for actual verification. Installation, a launch click
 and authentication alone never prove connection. Do not save/import memory.
