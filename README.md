@@ -1,8 +1,8 @@
 # Agent Upskill connection plugin
 
-A Codex marketplace bundling the Agent Upskill MCP connector and connect, save and sync skills.
-Version: 0.7.0. Marketplace: agentupskill-setup. Plugin: up.
-Commands: up:connect, up:save and up:sync.
+A Codex marketplace bundling the Agent Upskill MCP connector and setup, connect, delivery, save and sync skills.
+Version: 0.8.0. Marketplace: agentupskill-setup. Plugin: up.
+Commands: up:setup, up:connect, up:delivery, up:save and up:sync.
 
 Start from your signed-in Agent Upskill setup page and choose **Set up in Codex**.
 Send the prepared request, review installation and complete browser sign-in.
@@ -25,10 +25,10 @@ With Node 22.17+ and Codex installed, run the reviewed archive command shown by 
 
 npx --yes --ignore-scripts --package=https://github.com/agentupskill-ai/codex-plugin-marketplace/archive/<reviewed-commit>.tar.gz agentupskill-install --ref <reviewed-commit>
 
-Replace both placeholders with the exact reviewed commit from the setup page. The command uses native Codex marketplace registration and plugin installation. It preserves completed steps and stops on conflicting sources, commits, versions or disabled installations. It does not log in, edit MCP settings, repair credentials or save memory. Continue in your setup chat for browser consent and verification.
+Replace both placeholders with the exact reviewed commit from the setup page. The command uses native Codex marketplace registration and plugin installation. It preserves completed steps and stops on conflicts or disabled installations. Enabled 0.6.0/0.7.0 customers can explicitly approve a reviewed native update with --upgrade-from <verified-predecessor-commit>. It does not log in, edit MCP settings, repair credentials or save memory. Continue in your setup chat for browser consent and verification. After connection, the optional delivery skill stages the independently pinned signed background component in private durable storage. It requires separate browser consent and exact per-computer enrollment approval. Installation alone never enrolls a computer.
 
 ## Publishing
 
-Publish only the eleven allowlisted generated files in a dedicated customer-readable Git repository.
+Publish only the allowlisted generated files in a dedicated customer-readable Git repository.
 Record the reviewed commit and verify anonymous Git access before enabling the
 setup link. Do not copy the infrastructure repository or customer configuration.
