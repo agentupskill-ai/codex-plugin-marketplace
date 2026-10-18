@@ -10,7 +10,7 @@ from the setup page and replace the earlier code; do not reinstall or reset acce
 
 Before calling a tool, discover the actual registered name of the bundled
 connector agentupskill-bundled-connect. Confirm no host or project MCP entry
-shadows that name. Do not assume Codex adds a plugin prefix. Sign in with
+shadows that name. Do not assume Codex adds a plugin prefix. Preserve an existing full setup grant. If sign-in or that grant is missing, use
 codex mcp login <the registered name> --scopes memory:identity,memory:read,memory:write,skills:identity,skills:read,skills:write. Never
 request unscoped authentication; stop if consent requests permission management, Memory lifecycle or access beyond those six scopes.
 Let the user choose their account and approve browser consent.
@@ -30,3 +30,7 @@ tool fails or is unavailable, report the result and direct the user back to thei
 Agent Upskill setup page to check the connection or restart an expired attempt.
 Do not substitute an identity call, simulate success, alter account permissions,
 or save/import memory as part of this connection check.
+After connected: true, offer optional automatic skill delivery for this computer
+using [the delivery skill](../delivery/SKILL.md) in this same chat. A decline leaves
+the completed connection intact. Do not prepare a helper or enroll without its
+separate approval and exact local preview confirmation.

@@ -17,10 +17,26 @@ Use the actual conversation identifier supplied by the client environment
 (CODEX_THREAD_ID in Codex); do not invent it or group by a title or date.
 
 
-First call memory_index with a useful literal focus when the user named a topic.
+Inspect the discovered memory_index schema first. When it advertises query and
+the user named a topic, call it with a useful word query, never together with focus.
+Ranked search covers authored note and living-document prose, excluding generated
+scaffolding and the aggregate item catalog. Inspect matchedWordCount/queryWordCount,
+topicMatchCount and excludedCatalogCount; partial word coverage is a heuristic,
+not semantic relevance, and zero topic matches does not prove no relevant items
+exist. Try a shorter query or an unfiltered index when needed. Query continuations
+must reuse the same query and sourceCommit; restart selection after stale_delivery.
+If query is absent from the schema, use a useful short literal focus and broaden
+once if it finds no relevant notes. Report that search limitation and keep the
+same connector. Legacy unfiltered/literal discovery remains supported.
 Review the compact titles, session IDs, last save times, revisions and estimated
 reading cost. Follow its pagination when needed; an index alone is not loaded
-context. Select the project brief and full current notes relevant to the request.
+context. Select the identified project-orientation document and full current notes
+relevant to the request. Check orientation status, review time, attributed authority
+and sources. A caller-reported whole-document review is not operator acceptance or
+independent verification. Missing review evidence is unknown. Multiple designations
+mean ambiguity: do not choose authority by title or ID; use the labelled legacy
+brief fallback and report the candidates. Compare relevant later decisions and
+flag supported conflicts for review without claiming automatic contradiction detection.
 Include relevant living documents and the structured item catalog. Review the index's
 current dependency/expiry warnings and reviewCount/reviewTruncated (notice details
 are capped), even when an unchanged document was already
