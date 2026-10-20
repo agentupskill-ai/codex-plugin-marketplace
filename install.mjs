@@ -8,7 +8,8 @@ import {isDeepStrictEqual} from 'node:util';
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
 const pluginId='up@'+name;
-export const version='0.8.0';
+export const version='0.8.1';
+const predecessorVersions=['0.6.0','0.7.0','0.8.0'];
 export const expected={
   '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'up',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
   'plugins/agentupskill/.codex-plugin/plugin.json':{name:'up',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json',extensions:{'com.openai':{onboardingSkill:'./skills/setup/SKILL.md'}}},
@@ -56,7 +57,7 @@ function installed({allowOlder=false}={}) {
   const matches=result.installed.filter(entry=>entry.pluginId===pluginId);
   if(matches.length>1)throw new Error('Conflicting Agent Upskill installations. Review them in Codex.');
   const entry=matches[0];
-  if(entry && ((entry.version!==version&&!(allowOlder&&['0.6.0','0.7.0'].includes(entry.version))) || entry.enabled!==true || entry.installed!==true))throw new Error('Agent Upskill is disabled or has a different version. Review it with Codex’s native plugin controls; nothing was replaced.');
+  if(entry && ((entry.version!==version&&!(allowOlder&&predecessorVersions.includes(entry.version))) || entry.enabled!==true || entry.installed!==true))throw new Error('Agent Upskill is disabled or has a different version. Review it with Codex’s native plugin controls; nothing was replaced.');
   return entry;
 }
 
@@ -70,9 +71,9 @@ async function publicMetadata(ref,allowOlder=false){
   let wanted=expected;
   if(allowOlder){
     const manifest=values['plugins/agentupskill/.codex-plugin/plugin.json'];
-    if(!['0.6.0','0.7.0'].includes(manifest?.version))throw new Error('Only reviewed up 0.6.0/0.7.0 predecessors can use this native update.');
+    if(!predecessorVersions.includes(manifest?.version))throw new Error('Only reviewed up 0.6.0/0.7.0/0.8.0 predecessors can use this native update.');
     const {extensions,...prior}=expected['plugins/agentupskill/.codex-plugin/plugin.json'];
-    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...prior,version:manifest.version}};
+    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(manifest.version==='0.8.0'?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
   }
   if(!isDeepStrictEqual(values,wanted))throw new Error('The reviewed public package has unexpected metadata. Nothing was installed.');
   return values;

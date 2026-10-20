@@ -61,6 +61,94 @@ changes in the complete cumulative note, and report that only the note was saved
 item/document persistence was unavailable. Do not deploy or change connectors to
 enable it. The remaining structured instructions apply only when supported.
 
+Ordinary Save also compiles knowledge on a host whose discovered save schema
+advertises structured.compilation AND whose fresh session_context returns
+knowledge.available: true with schemaVersion: 1. These are capability checks;
+plugin version or model familiarity never proves support. On such a host, prepare
+all compilation before dispatching Save: one <=120-word overview of this cumulative
+note, up to two affected reusable topic documents, and one <=250-word recent-memory
+briefing. This is part of Save; there is no separate update-knowledge command or
+normal save-without-knowledge option. If compilation or source loading fails before
+dispatch, retain the draft and report Save incomplete: no new note was published.
+On older hosts without this capability, preserve legacy Save, explicitly report
+compilation unavailable, and do not pretend a note-only receipt includes knowledge.
+
+Use session_context.knowledge.plan: it selects at most seven current session notes
+by latest saved time then path. Replace repeated checkpoints with that session's
+current note; history and generated documents never enter the recent window.
+Load every selected older note and the existing affected documents through Sync at
+session_context.sourceCommit. Read every complete returned source, honor omissions
+and acknowledge only those source paths actually read. The new cumulative note is
+an in-memory prospective source; never fabricate its Git hash or future commit.
+Plan sources include path/title/time/sourceURL for acquisition; compilation.sources
+contain ONLY {conversationId,revisionId,contentHash}, or {prospective:true} for this
+new note. Strip acquisition metadata deliberately; keep pinned revision/hash bytes.
+Use coverage.omitted from the plan for the briefing. If a stale source or plan is
+rejected, reload and reconcile the complete draft before a new dispatch; never
+silently remove a required output or broaden the window to fit a budget.
+
+Use stable compilation role/key identities from knowledge.artifacts, not document
+titles. Roles: note-overview with key=this conversationId; topic with a stable short
+key; recent-briefing with key=recent. Reuse the document and generated section IDs;
+load its exact current JSON/hash before an update. New role documents require
+checked attributable direction from this explicit Save request; that assertion is
+about authorization to save, not independent verification of all knowledge. Create
+generated sections with refresh: explicit-save. Preserve authored/external sections
+verbatim and leave their ownership intact. Do not assign project-orientation or
+claim operator review merely because content was generated.
+
+Each document change includes compilation: {schemaVersion:1,role,key,
+compilerVersion:'save-v1',sources:[...],coverage:{omitted:0}} (briefing uses plan's
+omitted count). The overview has exactly the prospective source. Topics cite every
+current note used, at most 32; keep scope bounded and state any known coverage gap.
+The briefing cites exactly the plan's seven-or-fewer sources, including prospective
+only if selected. The service resolves prospective to the exact rendered note's
+revision and SHA-256. It computes sourceFingerprint; never supply that output field.
+Include structured.compilation: {sourceCommit:session_context.sourceCommit,
+keys:['note-overview:<conversationId>',...affectedTopicKeys,'recent-briefing:recent']}.
+Declare the complete intended set before Save. The service rejects missing or
+extra declared outputs, duplicate identities and stale references atomically.
+
+Before dispatch, check every claim against this artifact's declared sources.
+The note overview is derived ONLY from the complete cumulative note being saved:
+if that note contains only Save-workflow direction, summarize only that direction.
+Do not turn it into a recap of the other selected sessions. Older facts belong in
+its overview only if the cumulative note itself retains them. Topic and briefing
+claims must be supported by their own declared source IDs, including citations;
+reject and revise a draft with an undeclared source. Preserve explicit failure
+behavior: if compilation cannot finish, report Save incomplete, with no new
+publication before dispatch. Do not reduce this to "compilation is mandatory."
+An unapproved schedule does not establish that none is running; leave execution
+unknown unless a source proves it. A replacement's stated benefit does not prove
+the former choice lacked that feature. Label such connections as inference or
+omit them; never invent a deficiency, operational status or causal rationale.
+
+Use concise generated-section templates, omitting empty headings:
+Overview: Current recap; decisions with their acceptance; unresolved work/unknowns.
+Topic: Current knowledge; prior/corrected/superseded knowledge; reported or proposed
+claims and conflicts; source references. An approved replacement supersedes the
+old choice; preserve the reason/history without treating both as current. Keep
+unverified reports attributed, withdrawn counts withdrawn, unknown dates unknown,
+and merge/deployment/human acceptance distinct. Never import an unrelated fact.
+Briefing: Recent recap; unresolved work; coverage (selected sources, saved times and
+omissions). Up to three cross-session insights are optional: add compilation.insights
+[{text,sourceConversationIds:[...]}], each backed by at least two distinct selected
+sessions. These render as Inference, never as accepted fact or new instruction.
+Zero insights is valid and preferable to an invented connection. The overview and
+briefing word caps cover generated section prose plus insight text. Keep citations
+in section.sources ({reference,conversationId,span?}) and exact machine source refs
+in compilation.sources. All outputs must pass the existing byte/read ceilings;
+never truncate source notes, prune history or increase budgets to force a Save.
+
+After dispatch, retain the original UUID and EXACT title/body/structured request.
+Any uncertain result uses save_receipt/save_read for that same operation. Verify
+all declared role/key outputs, resolved source references, sourceFingerprint and
+returned savedArtifacts hashes against the original publication before reporting
+success. A receipt for only the note is insufficient. Reading an overview never
+acknowledges its full source note. Stale summaries remain historical context and
+must be labelled stale until a later explicit Save refreshes them. Discovery/read
+performs no inference, background update or dreaming.
+
 Use optional structured items for reusable facts alongside that readable note.
 Keep all ten meanings available: Decision, Observation, Learning, Preference / Constraint,
 Procedure, Open item, Reference, Assumption, Feedback and Goal. Split useful mixed
