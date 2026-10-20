@@ -6,7 +6,7 @@ before changing installation or configuration: the marketplace, plugin manifest,
 MCP manifest, setup/connect/delivery skills and references, package.json, install.mjs,
 and the delivery script with its pinned release inventory. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin up v0.8.0,
+marketplace is agentupskill-setup, plugin up v0.8.1,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
 There must be no plugin hooks, credential fields or account data. The installer and optional delivery bootstrap are the only executables; the npm
@@ -32,7 +32,7 @@ codex plugin add up@agentupskill-setup. Do not make the customer run
 Terminal commands or download a ZIP. An existing agentupskill@agentupskill-setup installation needs a reviewed native
 rename migration before installing up@agentupskill-setup. Stop instead of adding a
 second copy of its connector. Preserve the installed plugin and credentials.
-For an enabled up 0.6.0 or 0.7.0 installation, inspect its exact predecessor commit
+For an enabled up 0.6.0, 0.7.0 or 0.8.0 installation, inspect its exact predecessor commit
 and metadata too. Explicitly include the native pinned-marketplace retarget and
 plugin update in the approval. Use the reviewed installer with --upgrade-from
 <verified predecessor commit>. It uses only scoped native marketplace controls
