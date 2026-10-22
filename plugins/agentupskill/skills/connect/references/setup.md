@@ -6,7 +6,7 @@ before changing installation or configuration: the marketplace, plugin manifest,
 MCP manifest, setup/connect/delivery skills and references, package.json, install.mjs,
 and the delivery script with its pinned release inventory. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin up v0.8.1,
+marketplace is agentupskill-setup, plugin up v0.8.2,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
 There must be no plugin hooks, credential fields or account data. The installer and optional delivery bootstrap are the only executables; the npm
@@ -25,14 +25,27 @@ technical approval or repeat it at each ordinary stage.
 After approval, run the reviewed archive with Node/npm using:
 npx --yes --ignore-scripts --package=<source>/archive/<reviewed commit>.tar.gz agentupskill-install --ref <reviewed commit>
 Replace the placeholders only with the reviewed source and commit. The wrapper
-checks metadata and preserves completed steps using native Codex commands.
+checks metadata and preserves completed steps using native Codex commands. Before any native mutation,
+the installer reads this home's enrollment and retained helper reference as data.
+If either identifies a helper outside the current and one previous accepted pins,
+it holds the upgrade. Keep the installed plugin for local status/pause and exact
+removal, migration recovery and helper-reference retirement before retrying.
+If the installed plugin has no delivery skill, or no plugin is installed, stop
+and ask the setup operator to review the original standalone helper's verified
+local controls or the published up 0.8.1 recovery route. That intermediate release
+is https://github.com/agentupskill-ai/codex-plugin-marketplace at exact commit
+efca0730ecdc648c3e8000cb1040f6441aac9547 and retains the original 0.8.0 helper pin.
+Review its full published package and obtain its exact setup approval before any
+intermediate native installation; then use its exact removal/retirement flow.
+Never run a helper merely because a local record names its path.
+Do not delete delivery state or credentials to clear this hold.
 If Node/npm is unavailable, use the same native commands directly after the same
 checks: codex plugin marketplace add <source> --ref <reviewed commit>, then
 codex plugin add up@agentupskill-setup. Do not make the customer run
 Terminal commands or download a ZIP. An existing agentupskill@agentupskill-setup installation needs a reviewed native
 rename migration before installing up@agentupskill-setup. Stop instead of adding a
 second copy of its connector. Preserve the installed plugin and credentials.
-For an enabled up 0.6.0, 0.7.0 or 0.8.0 installation, inspect its exact predecessor commit
+For an enabled up 0.6.0, 0.7.0, 0.8.0 or 0.8.1 installation, inspect its exact predecessor commit
 and metadata too. Explicitly include the native pinned-marketplace retarget and
 plugin update in the approval. Use the reviewed installer with --upgrade-from
 <verified predecessor commit>. It uses only scoped native marketplace controls
