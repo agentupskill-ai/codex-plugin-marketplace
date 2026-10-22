@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import {spawnSync} from 'node:child_process';
-import {readFileSync,realpathSync} from 'node:fs';
+import {readFileSync,realpathSync,lstatSync,statSync} from 'node:fs';
+import {homedir} from 'node:os';
+import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {isDeepStrictEqual} from 'node:util';
@@ -8,13 +10,32 @@ import {isDeepStrictEqual} from 'node:util';
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
 const pluginId='up@'+name;
-export const version='0.8.1';
-const predecessorVersions=['0.6.0','0.7.0','0.8.0'];
+export const version='0.8.2';
+const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1'];
 export const expected={
   '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'up',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
   'plugins/agentupskill/.codex-plugin/plugin.json':{name:'up',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json',extensions:{'com.openai':{onboardingSkill:'./skills/setup/SKILL.md'}}},
   'plugins/agentupskill/.mcp.json':{mcpServers:{'agentupskill-bundled-connect':{type:'http',url:'https://app.agentupskill.ai/mcp'}}}
 };
+
+// Keep in sync with delivery-release.json; the archive contains no executable
+// helper import here. A dropped pin must retain its old controls before upgrade.
+const acceptedHelperPins=['4e5624a1c6536db817d80bfde7e13e1d219995f3af1664f8a04a2e1de68e4d5d','867184109d12eb7ccd4b8f77073c0cb1d1b771a0b18f686344c3ce994c62641b'];
+function preserveDeliveryControls(){
+  let home;
+  try{home=realpathSync(resolve(process.env.CODEX_HOME??resolve(homedir(),'.codex')));}
+  catch(error){if(error.code==='ENOENT')return;throw error;}
+  const s=statSync(home),identity=JSON.stringify([home,s.dev,s.ino,s.uid]);
+  const locator=resolve(homedir(),'Library','Application Support','AgentUpskill Shared Skills','delivery','helper-'+createHash('sha256').update(identity).digest('hex')+'.json');
+  for(const [file,enrollment] of [[resolve(home,'shared-skills-automation','enrollment.json'),true],[locator,false]]){
+    let st;
+    try{st=lstatSync(file);}catch(error){if(error.code==='ENOENT')continue;throw error;}
+    const hold='Delivery state needs review before this plugin upgrade. Keep the installed plugin and use its delivery skill to inspect, pause, detach through the exact removal preview, settle migration recovery and retire its helper reference before retrying. If no delivery skill is installed, stop and ask your setup operator to review the original standalone helper controls or the published 0.8.1 recovery route. Do not delete state, reset credentials or stop a live operation manually.';
+    if(!st.isFile()||st.isSymbolicLink()||st.nlink!==1||st.uid!==process.getuid()||(st.mode&0o077)||st.size>(enrollment?2*1024*1024:4096))throw new Error(hold);
+    let value;try{value=JSON.parse(readFileSync(file,'utf8'));}catch{throw new Error(hold);}
+    if(!acceptedHelperPins.includes(enrollment?value?.preview?.helper_sha256:value?.helper_sha256))throw new Error(hold);
+  }
+}
 
 function command(binary,args) {
   const result=spawnSync(binary,args,{encoding:'utf8',shell:false,timeout:120_000,maxBuffer:4*1024*1024});
@@ -71,9 +92,9 @@ async function publicMetadata(ref,allowOlder=false){
   let wanted=expected;
   if(allowOlder){
     const manifest=values['plugins/agentupskill/.codex-plugin/plugin.json'];
-    if(!predecessorVersions.includes(manifest?.version))throw new Error('Only reviewed up 0.6.0/0.7.0/0.8.0 predecessors can use this native update.');
+    if(!predecessorVersions.includes(manifest?.version))throw new Error('Only reviewed up 0.6.0/0.7.0/0.8.0/0.8.1 predecessors can use this native update.');
     const {extensions,...prior}=expected['plugins/agentupskill/.codex-plugin/plugin.json'];
-    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(manifest.version==='0.8.0'?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
+    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(['0.8.0','0.8.1'].includes(manifest.version)?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
   }
   if(!isDeepStrictEqual(values,wanted))throw new Error('The reviewed public package has unexpected metadata. Nothing was installed.');
   return values;
@@ -83,6 +104,7 @@ export async function install(ref,{upgradeFrom}={}) {
   if(upgradeFrom!==undefined&&(!/^[a-f0-9]{40}$/.test(upgradeFrom)||upgradeFrom===ref))throw new Error('Use the exact different reviewed predecessor commit with --upgrade-from.');
   await publicMetadata(ref);
   const prior=upgradeFrom?await publicMetadata(upgradeFrom,true):null;
+  preserveDeliveryControls();
   const listing=json(['plugin','marketplace','list','--json']);
   if(!Array.isArray(listing.marketplaces))throw new Error('Unsupported Codex marketplace response.');
   const candidates=listing.marketplaces.filter(entry=>entry.name===name);
