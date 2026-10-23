@@ -10,8 +10,8 @@ import {isDeepStrictEqual} from 'node:util';
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
 const pluginId='up@'+name;
-export const version='0.8.3';
-const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2'];
+export const version='0.8.4';
+const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3'];
 export const expected={
   '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'up',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
   'plugins/agentupskill/.codex-plugin/plugin.json':{name:'up',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json',extensions:{'com.openai':{onboardingSkill:'./skills/setup/SKILL.md'}}},
@@ -20,7 +20,7 @@ export const expected={
 
 // Keep in sync with delivery-release.json; the archive contains no executable
 // helper import here. A dropped pin must retain its old controls before upgrade.
-const acceptedHelperPins=['0d07e4ad8c19abe590527662ba6a9fe811096ddba34c8863d005cf008e3158d8','4e5624a1c6536db817d80bfde7e13e1d219995f3af1664f8a04a2e1de68e4d5d'];
+const acceptedHelperPins=['7a01a5b4fdf11a16825330658458393ba96bf7e517b2190a4bf98b3998f77196','0d07e4ad8c19abe590527662ba6a9fe811096ddba34c8863d005cf008e3158d8'];
 function preserveDeliveryControls(){
   let home;
   try{home=realpathSync(resolve(process.env.CODEX_HOME??resolve(homedir(),'.codex')));}
@@ -92,9 +92,9 @@ async function publicMetadata(ref,allowOlder=false){
   let wanted=expected;
   if(allowOlder){
     const manifest=values['plugins/agentupskill/.codex-plugin/plugin.json'];
-    if(!predecessorVersions.includes(manifest?.version))throw new Error('Only reviewed up 0.6.0/0.7.0/0.8.0/0.8.1/0.8.2 predecessors can use this native update.');
+    if(!predecessorVersions.includes(manifest?.version))throw new Error('Only reviewed up 0.6.0/0.7.0/0.8.0/0.8.1/0.8.2/0.8.3 predecessors can use this native update.');
     const {extensions,...prior}=expected['plugins/agentupskill/.codex-plugin/plugin.json'];
-    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(['0.8.0','0.8.1','0.8.2'].includes(manifest.version)?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
+    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(['0.8.0','0.8.1','0.8.2','0.8.3'].includes(manifest.version)?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
   }
   if(!isDeepStrictEqual(values,wanted))throw new Error('The reviewed public package has unexpected metadata. Nothing was installed.');
   return values;

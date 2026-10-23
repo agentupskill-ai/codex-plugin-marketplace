@@ -154,7 +154,12 @@ A previous helper supports only local controls: use the explicit renewal flow be
 before new recovery. The renewal detaches the old enrollment with skills kept,
 retires only its helper reference, prepares the current pinned helper and requires
 a NEW complete enrollment preview and exact user confirmation. Existing credentials
-are preserved. The old helper cannot retire recovery archives that it predates.
+are preserved. A verified previous helper whose complete pinned payload matches
+the current release except signed release metadata and the runtime admission table
+retains the two local archive retirement commands, including while signed out or
+expired. These offline commands do not invoke runtime admission. Any other payload
+change holds retirement until exact renewal. New ownership recovery and migration
+still require renewal and their separate approvals.
 Never swap helpers or reuse old enrollment consent silently.
 
 8. After a successful migration, inspect status and finish automation-setup then
