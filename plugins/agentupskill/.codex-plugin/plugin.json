@@ -1,6 +1,6 @@
 {
   "name": "up",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Connect Agent Upskill and carry useful context between Codex conversations.",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",

@@ -63,7 +63,7 @@ hold; do not download a replacement as an incidental local-control action.
 4. For subsequent calls use node <absolute-script> run COMMAND --codex-home
    <real-existing-home>. For login, automation-preview, automation-enroll,
    automation-setup, automation-resume, automation-check-now, automation-apply and
-   migration preparation/application also pass --expected-principal <principalId>
+   migration and native-home recovery preparation/application also pass --expected-principal <principalId>
    --expected-workspace <workspaceId> --expected-entitlement <entitlementVersion>
    from the current authenticated skills_identity. Never invent these values.
    Run status first. A valid same-account helper session is preserved; signed-out
@@ -116,6 +116,47 @@ hold; do not download a replacement as an incidental local-control action.
    leaves it paused. No cache edits, silent deletion, duplicate sources or automatic
    migration. Pending/edited/unpreservable state requires the released exact recovery.
 
+If migration holds because only the old native home filesystem device number
+changed, keep it paused. With the current helper use
+   automation-native-home-recovery-preview --native-root <receipt-proven-root>.
+Do not infer a reboot or the same physical Mac from matching path/owner/inode.
+Legacy records contain no historical hardware/volume ID; cloned/restored homes can
+match these attributes. The operator must independently know the intended Mac/home;
+uncertainty stays held and this never authorizes adoption on another Mac.
+Show/open its complete returned preview_file, original/current identities, account,
+full private backup, inventory, every old skill and host/Sites warnings. Obtain
+both its exact confirmation_sha256 and explicit confirmation that this is the same
+intended Mac and Codex home. Only then use automation-native-home-recover
+   --preview-file <returned-file> --confirmation-sha256 <digest>
+   --same-mac-home confirmed.
+Recovery preserves the original ownership record and changes only the native home
+binding after strict checks; it never removes a plugin, migrates or enables delivery.
+A changed owner/inode/account, edits, pending native work or unrelated drift stays
+held. Prepare a fresh canonical migration preview after recovery and obtain the
+separate migration/all-old-workflows-finished/background-activation approvals.
+Eight live recovery archives are allowed. Failed or stale previews stay preserved.
+For an exact stale/failed archive, use automation-native-home-recovery-retire-preview
+   --native-root <receipt-proven-root> --recovery-directory <exact-UUID>.
+Show/open the complete returned preview_file and obtain its exact digest approval
+before automation-native-home-recovery-retire --preview-file <returned-file>
+   --confirmation-sha256 <digest>.
+Use the exact canonical native-root spelling from receipts, including case.
+Preserve unowned entries (such as Finder metadata) without adopting them; corrupted
+UUID-shaped owned archives remain held. After recovery, original-state.json,
+preview.json and consent.json are permanent private ownership dependencies: never
+edit, delete, hard-link or change their permissions. Losing integrity holds even
+migration/removal. Retirement preserves these files and completed audit pointers.
+Retirement is local/offline, keeps every file in place, frees only the live-preview
+slot (not disk space), withdraws future application of that preview and changes no
+ownership, skill, scheduler or pause. Completed ownership audit pointers remain
+valid. Do not delete evidence by hand or retire without the exact confirmation.
+A previous helper supports only local controls: use the explicit renewal flow below
+before new recovery. The renewal detaches the old enrollment with skills kept,
+retires only its helper reference, prepares the current pinned helper and requires
+a NEW complete enrollment preview and exact user confirmation. Existing credentials
+are preserved. The old helper cannot retire recovery archives that it predates.
+Never swap helpers or reuse old enrollment consent silently.
+
 8. After a successful migration, inspect status and finish automation-setup then
    automation-resume only when activating background delivery was included in the
    explicit migration approval. Preserve any separate user pause or recovery hold.
@@ -155,7 +196,7 @@ Never unlock a live/ambiguous owner or silently resume after rollback/removal.
 
 For renewal, a plugin may retain at most one previous exact helper pin with its
 complete independent inventory; unknown pins are holds. A known previous helper
-supports local controls/recovery only, never new enrollment, remote operations or
+supports local controls and migration recovery only, never native-home recovery, new enrollment, remote operations or
 rollback. First detach its enrollment through the exact removal flow, settling all
 owned migration recovery. Run retire-helper-preview --codex-home <home>, show its
 complete preview/digest and obtain explicit exact confirmation before

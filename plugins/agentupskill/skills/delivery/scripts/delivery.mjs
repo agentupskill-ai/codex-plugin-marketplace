@@ -202,14 +202,15 @@ export async function retireHelper({home,storage=defaultStorage(),confirmation,t
   return {state:'helper-reference-retired',retained_reference:archive,helper_preserved:true,evidence_preserved:true};
 }
 
-const accountCommands=new Set(['login','automation-preview','automation-enroll','automation-setup','automation-resume','automation-check-now','automation-apply','automation-migration-preview','automation-migrate']);
-const localCommands=new Set(['status','logout','lock-status','unlock','automation-status','automation-pause','automation-remove-enrollment-preview','automation-remove-enrollment','automation-cleanup-preview','automation-remove-preview','automation-rollback-preview','automation-local-apply','automation-finalize','automation-lock-status','automation-lock-unlock','automation-stage-status','automation-stage-unlock','automation-stage-purge-partial','automation-stage-purge-quarantine','automation-migration-recovery-preview','automation-migration-finalize','automation-migration-abandon-preview','automation-migration-abandon']);
+const accountCommands=new Set(['login','automation-preview','automation-enroll','automation-setup','automation-resume','automation-check-now','automation-apply','automation-migration-preview','automation-migrate','automation-native-home-recovery-preview','automation-native-home-recover']);
+const localCommands=new Set(['status','logout','lock-status','unlock','automation-status','automation-pause','automation-remove-enrollment-preview','automation-remove-enrollment','automation-cleanup-preview','automation-remove-preview','automation-rollback-preview','automation-local-apply','automation-finalize','automation-lock-status','automation-lock-unlock','automation-stage-status','automation-stage-unlock','automation-stage-purge-partial','automation-stage-purge-quarantine','automation-migration-recovery-preview','automation-migration-finalize','automation-migration-abandon-preview','automation-migration-abandon','automation-native-home-recovery-retire-preview','automation-native-home-recovery-retire']);
 export async function runDelivery(command,options,{storage=defaultStorage(),inspect=inspectDelivery,run=spawnSync,trust=trustedDirectory}={}){
   check(accountCommands.has(command)||localCommands.has(command),'Unsupported delivery setup command');
   const {home,expected,flags=[]}=options;
   check(path.isAbsolute(home??'')&&fs.realpathSync(home)===home&&fs.statSync(home).isDirectory(),'Use the real existing Codex home');
   check(!flags.includes('--codex-home')&&!flags.includes('--keychain-helper')&&!flags.includes('--keychain-sha256')&&!flags.includes('--root-pin')&&!flags.includes('--service')&&!flags.includes('--artifact-origin')&&!flags.includes('--artifact-layout')&&!flags.includes('--switch-account'),'Fixed account/trust arguments cannot be replaced');
   const info=await inspect({storage,home,allowExpired:localCommands.has(command)});check(info.state==='verified-helper','Approve and prepare the pinned helper first');
+  if(info.previous_helper&&['automation-native-home-recovery-retire-preview','automation-native-home-recovery-retire'].includes(command))fail('Native home recovery archive retirement requires the current helper; preserve the previous helper and use the exact enrollment detach/reference retirement and new enrollment flow first');
   const node=fs.realpathSync(process.execPath),root=info.helper_root;
   let needsAccount=accountCommands.has(command);
   if(command==='automation-local-apply'){
@@ -253,7 +254,15 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   if(command==='automation-preview'){
     check(value.specification?.account?.principal_id===expected.principalId&&value.specification.account.workspace_id===expected.workspaceId&&value.specification.account.codex_profile===home&&value.specification.entitlement_version===expected.entitlementVersion&&/^[a-f0-9]{64}$/.test(value.confirmation_sha256),'Enrollment preview account mismatch');
   }
-  if(['automation-preview','automation-remove-enrollment-preview'].includes(command)){
+  if(command==='automation-native-home-recovery-preview'){
+    const account=value.expected?.account;
+    check(value.kind==='SharedSkillsNativeHomeRecoveryPreview'&&account?.principal_id===expected.principalId&&account.workspace_id===expected.workspaceId&&account.codex_profile===home&&account.service==='https://app.agentupskill.ai','Native home recovery preview account mismatch');
+  }
+  if(command==='automation-native-home-recovery-retire-preview'){
+    check(value.kind==='SharedSkillsNativeHomeRecoveryRetirement'&&value.codex_home===home,'Native home recovery retirement preview home mismatch');
+    check(flags.includes('--native-root')&&flags.includes('--recovery-directory')&&value.native_root===flags[flags.indexOf('--native-root')+1]&&value.directory===flags[flags.indexOf('--recovery-directory')+1],'Native home recovery retirement preview request mismatch');
+  }
+  if(['automation-preview','automation-remove-enrollment-preview','automation-native-home-recovery-preview','automation-native-home-recovery-retire-preview'].includes(command)){
     check(/^[a-f0-9]{64}$/.test(value.confirmation_sha256),'Helper preview has no exact confirmation digest');
     makePrivate(path.dirname(storage),trust);makePrivate(storage,trust);
     const dir=path.join(storage,'previews');makePrivate(dir,trust);
