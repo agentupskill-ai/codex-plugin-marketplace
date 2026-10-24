@@ -66,6 +66,16 @@ hold; do not download a replacement as an incidental local-control action.
    migration and native-home recovery preparation/application also pass --expected-principal <principalId>
    --expected-workspace <workspaceId> --expected-entitlement <entitlementVersion>
    from the current authenticated skills_identity. Never invent these values.
+   Allow at least 1830 seconds for each wrapper call in the outer runner. Account
+   commands, login and logout can run status then the requested command; each
+   subprocess retains its 900-second interruption bound. The outer allowance
+   allows for both subprocesses and typically brief preparation; slow filesystem
+   checks can take longer. It is not a total wizard deadline. Foreground preflights and enrollment's
+   final resume each allow 120 seconds of network work, not a total wizard deadline.
+   Unchanged polls and standalone resume retain 45 seconds. Changed or matching
+   pending delivery can use 120 seconds total from its original start, only after
+   fresh intent and receipt checks. Requests retain their 15-second limit.
+   Preserve partial results after an interruption and inspect status before retry.
    Run status first. A valid same-account helper session is preserved; signed-out
    requires login with human browser consent. The wrapper fixes the helper's
    service, Skills-only login, Keychain binary and trust pins. An account mismatch
