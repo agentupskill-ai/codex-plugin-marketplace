@@ -1,35 +1,35 @@
 {
-  "origin": "https://au-skills-helper-d5809abbee5673daf7b5d99311da7a79.agentupskill.workers.dev",
-  "archive_bytes": 161903,
-  "archive_sha256": "8fa0a1630fdbd028cf5c9eae9df619ac21843c2c1c20d2276d95df06d65730a2",
-  "helper_sha256": "d5809abbee5673daf7b5d99311da7a7990e39039f60ab539945ba0d24838f526",
-  "source_commit": "150d1cb957423a3d519f8fa89288ecfb64bf030f",
-  "verified_at": "2026-10-24T17:06:15.086550+00:00",
-  "archive": "agentupskill-helper-d5809abbee5673daf7b5d99311da7a7990e39039f60ab539945ba0d24838f526.tgz",
+  "origin": "https://au-skills-helper-512c733dad4839790be7e1b1d03c88c0.agentupskill.workers.dev",
+  "archive_bytes": 162484,
+  "archive_sha256": "c87929ed204898e3cdec86331f4fa77a4986b70e473a5a1c712d8951d2f9fc97",
+  "helper_sha256": "512c733dad4839790be7e1b1d03c88c086cbd426855870017e03ea4f2bbeb471",
+  "source_commit": "71eb03975da13b5316195b2864cf9eec92514060",
+  "verified_at": "2026-10-26T20:19:26.679808+00:00",
+  "archive": "agentupskill-helper-512c733dad4839790be7e1b1d03c88c086cbd426855870017e03ea4f2bbeb471.tgz",
   "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
   "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
   "previous_releases": [
     {
-      "origin": "https://au-skills-helper-7a01a5b4fdf11a16825330658458393b.agentupskill.workers.dev",
-      "archive_bytes": 161560,
-      "archive_sha256": "0d7d8bef73936ee334142d6976d85a32fa6d0a7725956ac8cffce665a9197071",
-      "helper_sha256": "7a01a5b4fdf11a16825330658458393ba96bf7e517b2190a4bf98b3998f77196",
-      "source_commit": "bbd6ec848e1a0a2cca60052ab80404e8502f998a",
-      "verified_at": "2026-10-23T18:35:55.311176+00:00",
-      "archive": "agentupskill-helper-7a01a5b4fdf11a16825330658458393ba96bf7e517b2190a4bf98b3998f77196.tgz",
+      "origin": "https://au-skills-helper-d5809abbee5673daf7b5d99311da7a79.agentupskill.workers.dev",
+      "archive_bytes": 161903,
+      "archive_sha256": "8fa0a1630fdbd028cf5c9eae9df619ac21843c2c1c20d2276d95df06d65730a2",
+      "helper_sha256": "d5809abbee5673daf7b5d99311da7a7990e39039f60ab539945ba0d24838f526",
+      "source_commit": "150d1cb957423a3d519f8fa89288ecfb64bf030f",
+      "verified_at": "2026-10-24T17:06:15.086550+00:00",
+      "archive": "agentupskill-helper-d5809abbee5673daf7b5d99311da7a7990e39039f60ab539945ba0d24838f526.tgz",
       "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
       "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
       "files": [
         {
           "path": "helper.json",
           "bytes": 6876,
-          "sha256": "4e1ac65db827ff6189dea831218606bd794de0616d8dfd21916ffecea83e2271",
+          "sha256": "5449ef8eaf042e6334c52465ff33fc9af02d8b05de2c71c359fddb525788dc4e",
           "executable": false
         },
         {
           "path": "keychain.json",
           "bytes": 455,
-          "sha256": "68514376675e7db06ee94697ceaef529ff18281560300a75f32ce9f8c1bd71a6",
+          "sha256": "da026f67b8206f2ebe9d5679ef8c10fb089a6a5a063c3a5873e71ef4eda8571a",
           "executable": false
         },
         {
@@ -52,8 +52,8 @@
         },
         {
           "path": "lib/automation-command.mjs",
-          "bytes": 32199,
-          "sha256": "0c1d583c0da7356144580ffc55df175391a519bea4f972a3c3615c01207fbbff",
+          "bytes": 33082,
+          "sha256": "6767c0ec4ea5a40f1f72e84bce540541347a3102d6d9559c94a2f2adde0d3406",
           "executable": false
         },
         {
@@ -82,8 +82,8 @@
         },
         {
           "path": "lib/automation-runner.mjs",
-          "bytes": 16513,
-          "sha256": "9a18452ff115464549709d7f938c0af79d280f02edf805c564ec5246d3490c21",
+          "bytes": 17078,
+          "sha256": "0fdd0501c9cdbca84e1bb5e6217bad17a9137cfd997a969048a7dbd16f84bd6a",
           "executable": false
         },
         {
@@ -304,8 +304,8 @@
         },
         {
           "path": "proofs.json",
-          "bytes": 7317,
-          "sha256": "2b9b5460417133c0faef5c78e1c2658ccef8d27328375c4b0c27688114aaa764",
+          "bytes": 7333,
+          "sha256": "d818334d4fc8b22e76947f926ee64177c2fd838d4fd385a19a8e68e8b5245bc5",
           "executable": false
         },
         {
@@ -329,7 +329,7 @@
         {
           "path": "source.json",
           "bytes": 7863,
-          "sha256": "637df1652ef818cd044a70e9965e74bac561529d0d3599f47cc5a8a9bbf61302",
+          "sha256": "bb93b74812ee4fdb1ba77b642b2529388ec614f6af58990529fd74af790d43d1",
           "executable": false
         }
       ]
@@ -339,13 +339,13 @@
     {
       "path": "helper.json",
       "bytes": 6876,
-      "sha256": "5449ef8eaf042e6334c52465ff33fc9af02d8b05de2c71c359fddb525788dc4e",
+      "sha256": "06f484a469127cdfb830e47eac6a4d765f7aa4a1eb8bd44b0dca2b5602a9e30e",
       "executable": false
     },
     {
       "path": "keychain.json",
       "bytes": 455,
-      "sha256": "da026f67b8206f2ebe9d5679ef8c10fb089a6a5a063c3a5873e71ef4eda8571a",
+      "sha256": "7eddc6d2ddfa23692fbbe185413cfd84da5ca0236d7cc52f6acb6340e91d8bf3",
       "executable": false
     },
     {
@@ -416,8 +416,8 @@
     },
     {
       "path": "lib/connected-apply.mjs",
-      "bytes": 13574,
-      "sha256": "dac94e83fd574e0c46064dde02e92b71a14e0f061ed56cada7fded6103f5b555",
+      "bytes": 13921,
+      "sha256": "dabc45e67d94f28c34e8e906b51b27ad6e63c8aa318fe81c24264c2ef5a5c930",
       "executable": false
     },
     {
@@ -428,8 +428,8 @@
     },
     {
       "path": "lib/connected-plan.mjs",
-      "bytes": 7733,
-      "sha256": "cc7f4509dfbe63d61645a8eb3e99e34f86d5fd70811a0524cefad9901b67f3b0",
+      "bytes": 7740,
+      "sha256": "04dbf839ba45efe4ae831868c5094a3e2116defe4fb89d7afac96e1a754a5809",
       "executable": false
     },
     {
@@ -458,8 +458,8 @@
     },
     {
       "path": "lib/filesystem-migration.mjs",
-      "bytes": 34938,
-      "sha256": "fcd8b14fc82a60bf6c8dc5714e8f53c17b652d5378d9237b6be0fbce1359f068",
+      "bytes": 35189,
+      "sha256": "57dee2c55e1fabb131e7366cd187c215dae3c9c6595d039b4a0b15b26772b074",
       "executable": false
     },
     {
@@ -482,8 +482,8 @@
     },
     {
       "path": "lib/host-preflight.mjs",
-      "bytes": 7146,
-      "sha256": "0b9892e21f4140bff770b54ec2fdd01389bd253f9b953220a3a0bf6cee590416",
+      "bytes": 8007,
+      "sha256": "1d9a93d1bed7442a1908dfb8368ac397892ce74baf7d42101863f267feac763b",
       "executable": false
     },
     {
@@ -536,8 +536,8 @@
     },
     {
       "path": "lib/native-store.mjs",
-      "bytes": 59722,
-      "sha256": "d39a930ec5eec0b16c50d5c177e02a43b35fd0ad521fd7134a56a9573ace5027",
+      "bytes": 60877,
+      "sha256": "1e2464af8fa5857e10fead0358e149a0eeaa6b6a7a338b6ef68361d8a2878a77",
       "executable": false
     },
     {
@@ -620,8 +620,8 @@
     },
     {
       "path": "proofs.json",
-      "bytes": 7333,
-      "sha256": "d818334d4fc8b22e76947f926ee64177c2fd838d4fd385a19a8e68e8b5245bc5",
+      "bytes": 7341,
+      "sha256": "1a0723d0d7696fadc651257aad1d8881f0561b9d62fc7366e840417ac368361e",
       "executable": false
     },
     {
@@ -632,8 +632,8 @@
     },
     {
       "path": "scripts/connected-skills.mjs",
-      "bytes": 11499,
-      "sha256": "5c332e4979197aa6d55778005b0bba2bf6ff743de616df45de4265b41a5f2e86",
+      "bytes": 11783,
+      "sha256": "9425eb55749e8831372f50f63b7bd162da912d6ac2638319dd626b9420cae20f",
       "executable": false
     },
     {
@@ -645,7 +645,7 @@
     {
       "path": "source.json",
       "bytes": 7863,
-      "sha256": "bb93b74812ee4fdb1ba77b642b2529388ec614f6af58990529fd74af790d43d1",
+      "sha256": "6e3740d574004d731dd7eb3e62591127f838564627a7225337f4e058a5c3dae6",
       "executable": false
     }
   ]

@@ -213,8 +213,8 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   if(info.previous_helper&&['automation-native-home-recovery-retire-preview','automation-native-home-recovery-retire'].includes(command)){
     const previous=release.previous_releases.find(pin=>pin.helper_sha256===info.helper_sha256);
     // Compare the whole executable payload, not only the two command modules.
-    // Release envelopes differ by release. The runtime admission table also
-    // differs here, but neither offline retirement command invokes admission.
+    // Release envelopes differ by release. The runtime admission table is
+    // excluded because neither offline retirement command invokes admission.
     const excluded=new Set(['helper.json','keychain.json','proofs.json','source.json','lib/host-prerequisites.mjs']);
     const current=release.files.filter(entry=>!excluded.has(entry.path)),prior=previous?.files.filter(entry=>!excluded.has(entry.path));
     check(prior&&current.length>0&&prior.length===current.length&&current.every(entry=>prior.some(old=>old.path===entry.path&&old.sha256===entry.sha256&&old.bytes===entry.bytes&&old.executable===entry.executable)),'Previous helper predates or differs from the reviewed recovery archive retirement implementation; preserve it and use exact renewal first');
