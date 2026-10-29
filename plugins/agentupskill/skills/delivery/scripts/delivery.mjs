@@ -105,7 +105,7 @@ export async function inspectDelivery({home,storage=defaultStorage(),trust=trust
   platformCheck();let root=targetFor(storage);
   check(acceptedPins.length>=1&&acceptedPins.length<=2&&new Set(acceptedPins.map(p=>p.helper_sha256)).size===acceptedPins.length,'Review at most the current and one previous immutable helper pin');
   const select=hash=>{const pin=acceptedPins.find(p=>p.helper_sha256===hash);check(pin,'Unknown helper pin; preserve it for review');return pin;};
-  const describe=(root,result,pin)=>({state:'verified-helper',helper_root:root,helper_sha256:result.helper_sha256,keychain_sha256:result.keychain_sha256??pin.keychain_sha256,trust_expired:result.trust_expired??false,previous_helper:pin.helper_sha256!==acceptedPins[0].helper_sha256,availability:'not-checked'});
+  const describe=(root,result,pin)=>({state:'verified-helper',helper_root:root,helper_sha256:result.helper_sha256,keychain_sha256:result.keychain_sha256??pin.keychain_sha256,trust_expired:result.trust_expired??false,previous_helper:pin.helper_sha256!==acceptedPins[0].helper_sha256,codex_open_app_supported:['lib/codex-connection.mjs','lib/codex-managed-session.mjs'].every(name=>pin.files.some(file=>file.path===name)),availability:'not-checked'});
   // A customer may already have enrolled the released standalone helper. Treat
   // its private record as data until the candidate's complete bytes are pinned;
   // then use the released ownership reader. Never relocate an enrolled helper.
@@ -209,6 +209,8 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   const {home,expected,flags=[]}=options;
   check(path.isAbsolute(home??'')&&fs.realpathSync(home)===home&&fs.statSync(home).isDirectory(),'Use the real existing Codex home');
   check(!flags.includes('--codex-home')&&!flags.includes('--keychain-helper')&&!flags.includes('--keychain-sha256')&&!flags.includes('--root-pin')&&!flags.includes('--service')&&!flags.includes('--artifact-origin')&&!flags.includes('--artifact-layout')&&!flags.includes('--switch-account'),'Fixed account/trust arguments cannot be replaced');
+  const connectionIndex=flags.indexOf('--connection');
+  check(!flags.some(flag=>flag.startsWith('--connection='))&&(connectionIndex<0||command==='automation-preview'&&flags.lastIndexOf('--connection')===connectionIndex&&flags[connectionIndex+1]==='codex'),'Use --connection codex only once on automation-preview; later commands use the confirmed enrollment');
   const info=await inspect({storage,home,allowExpired:localCommands.has(command)});check(info.state==='verified-helper','Approve and prepare the pinned helper first');
   if(info.previous_helper&&['automation-native-home-recovery-retire-preview','automation-native-home-recovery-retire'].includes(command)){
     const previous=release.previous_releases.find(pin=>pin.helper_sha256===info.helper_sha256);
@@ -230,6 +232,24 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   if(needsAccount)check(expected&&['principalId','workspaceId','entitlementVersion'].every(k=>typeof expected[k]==='string'&&expected[k].length>0&&expected[k].length<=256),'Use the current authenticated skills_identity binding');
   if(needsAccount)check(!info.trust_expired,'Helper trust expired: local controls remain available; reviewed renewal is required before account/network operations or rollback');
   if(needsAccount)check(!info.previous_helper,'Previous helper supports local controls only; remove/detach its enrollment and retire its reference before explicitly preparing the current helper');
+  let specification=null;
+  if(command==='automation-enroll'){
+    const index=flags.indexOf('--preview-file'),confirmationIndex=flags.indexOf('--confirmation-sha256');
+    check(flags.length===4&&[0,2].includes(index)&&[0,2].includes(confirmationIndex),'Use one exact private enrollment preview and confirmation');
+    const {validateAutomationConsent}=await import(pathToFileURL(path.join(root,'lib/automation-enrollment.mjs')).href);
+    specification=validateAutomationConsent(privateJSON(flags[index+1],2*1024*1024),flags[confirmationIndex+1]).specification;
+    check(specification.helper_root===root,'Enrollment preview belongs to another helper');
+  }else if(command!=='automation-preview'&&info.existing_enrollment&&(needsAccount||['status','login','logout'].includes(command))){
+    const {readOwnedAutomationEnrollment}=await import(pathToFileURL(path.join(root,'lib/automation-enrollment.mjs')).href);
+    specification=readOwnedAutomationEnrollment(home)?.preview.specification;
+    check(specification,'Existing enrollment is unavailable; inspect local status before retrying');
+  }
+  const codexMode=connectionIndex>=0||specification?.connection?.kind==='codex-open-app';
+  if(codexMode){
+    check(info.codex_open_app_supported,'The pinned helper does not support the Codex open-app connection; release the reviewed helper before setup. Do not fall back to separate sign-in');
+    check(!['login','logout'].includes(command),'Codex manages this connection; use Codex sign-in controls without changing helper credentials');
+  }
+  if(needsAccount&&specification)check(specification.account?.service==='https://app.agentupskill.ai'&&specification.account.codex_profile===home&&specification.account.principal_id===expected.principalId&&specification.account.workspace_id===expected.workspaceId&&specification.entitlement_version===expected.entitlementVersion,'The enrollment account differs from the current authenticated skills_identity; preserve it and stop');
   const remembered=!info.existing_enrollment||rememberHelper(storage,home,root,trust,info.helper_sha256);
   if(needsAccount)check(remembered,'Retained helper reference conflicts; preserve it and use local removal/retirement before new account operations');
   trust(path.dirname(node));
@@ -243,7 +263,7 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   };
   const sameAccount=value=>check(value.state==='signed-in-local'&&value.service==='https://app.agentupskill.ai'&&value.codex_profile===home&&value.principal_id===expected?.principalId&&value.workspace_id===expected?.workspaceId&&value.entitlement_version===expected?.entitlementVersion,'Helper account differs from the connected website account; preserve credentials and stop before enrollment. Inspect status and obtain separate explicit approval for helper logout before retrying login');
   if(needsAccount){
-    if(command!=='login')sameAccount(execute('status'));
+    if(command!=='login'&&!codexMode)sameAccount(execute('status'));
   }
   if(command==='login'){
     const current=execute('status');
@@ -258,9 +278,10 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
     return report(execute('logout'));
   }
   const extra=command==='automation-preview'?['--root-pin',release.root_pin,'--artifact-origin','https://agentupskill.workers.dev','--artifact-layout','publication-workers-v1']:[];
-  const value=execute(command,[...extra,...flags]);
+  const value=execute(codexMode&&command==='status'?'automation-status':command,[...extra,...flags]);
   if(command==='automation-preview'){
     check(value.specification?.account?.principal_id===expected.principalId&&value.specification.account.workspace_id===expected.workspaceId&&value.specification.account.codex_profile===home&&value.specification.entitlement_version===expected.entitlementVersion&&/^[a-f0-9]{64}$/.test(value.confirmation_sha256),'Enrollment preview account mismatch');
+    if(codexMode)check(value.specification.connection?.kind==='codex-open-app','Helper did not return the requested Codex open-app connection; do not enroll');
   }
   if(command==='automation-native-home-recovery-preview'){
     const account=value.expected?.account;
