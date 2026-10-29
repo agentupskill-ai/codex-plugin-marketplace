@@ -15,6 +15,15 @@ retain their current authority checks. A missing/changed helper remains a repair
 hold; do not download a replacement as an incidental local-control action.
 
 1. Offer automatic delivery on this computer. Explain: the pinned signed component
+   supports Codex's existing sign-in. After the approved prepare/inspect step
+   returns verified-helper, require codex_open_app_supported=true for that mode.
+   A not-installed result goes to the approved prepare step before deciding support.
+   For that explicitly selected mode, update work
+   runs only while Codex is open, uses its existing connection and creates no
+   separate device key or helper session. Keep Codex open during setup and tests.
+   A retained older helper needs the explicit renewal flow below before this mode;
+   never fall back to separate login.
+   The separate helper-session mode is available only when the user chooses it: it
    runs at login and nominally every five minutes while awake/online, including
    with Codex closed; it needs a separate Skills identity/read browser consent and
    Keychain session. The release is publisher-signed; the Keychain binary is ad-hoc
@@ -66,6 +75,17 @@ hold; do not download a replacement as an incidental local-control action.
    migration and native-home recovery preparation/application also pass --expected-principal <principalId>
    --expected-workspace <workspaceId> --expected-entitlement <entitlementVersion>
    from the current authenticated skills_identity. Never invent these values.
+   For Codex open-app mode use automation-status, skip helper login/status/logout,
+   and pass --connection codex only on automation-preview. Enrollment and later
+   commands derive the mode from the validated preview/owned enrollment and compare
+   its account to the current identity. The helper authenticates its own fresh
+   Codex connection before network work; the wrapper never handles tokens.
+   Choosing Codex mode does not read or delete a pre-existing helper session.
+   Explain that any old session stays preserved. If the user separately wants it
+   removed, inspect and explicitly confirm helper logout before Codex enrollment.
+   Never infer logout consent from the mode choice. Once Codex enrollment exists,
+   its exact removal/detachment must precede separate helper-session cleanup and
+   any new enrollment approval; helper logout would otherwise pause enrollment.
    Allow at least 1830 seconds for each wrapper call in the outer runner. Account
    commands, login and logout can run status then the requested command; each
    subprocess retains its 900-second interruption bound. The outer allowance
@@ -76,7 +96,8 @@ hold; do not download a replacement as an incidental local-control action.
    pending delivery can use 120 seconds total from its original start, only after
    fresh intent and receipt checks. Requests retain their 15-second limit.
    Preserve partial results after an interruption and inspect status before retry.
-   Run status first. A valid same-account helper session is preserved; signed-out
+   For the separately selected helper-session mode, run status first. A valid
+   same-account helper session is preserved; signed-out
    requires login with human browser consent. The wrapper fixes the helper's
    service, Skills-only login, Keychain binary and trust pins. An account mismatch
    stops before enrollment; do not switch accounts, delete credentials or adopt
@@ -97,7 +118,8 @@ hold; do not download a replacement as an incidental local-control action.
    resume. For incomplete setup inspect its reason before retrying automation-setup.
    For new enrollment, open https://app.agentupskill.ai/signup/skills for the user
    to review/save exact choices themselves, then run automation-preview with
-   --codex <actual Desktop bundled CLI>. The script saves an exclusive private
+   --codex <actual Desktop bundled CLI> and, for the Codex open-app choice,
+   --connection codex. The script saves an exclusive private
    preview and returns preview_file plus its complete preview. Show/open that full
    preview, explain its account/home/runtime, roots, access baseline, schedule and
    exact confirmation_sha256. Explain the warnings in step 6 before asking the user
