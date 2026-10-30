@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import {spawnSync} from 'node:child_process';
-import {readFileSync,realpathSync,lstatSync,statSync} from 'node:fs';
+import {readFileSync,realpathSync,lstatSync,statSync,constants,openSync,closeSync,readSync,fstatSync} from 'node:fs';
 import {homedir} from 'node:os';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
@@ -10,8 +10,8 @@ import {isDeepStrictEqual} from 'node:util';
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
 const pluginId='up@'+name;
-export const version='0.8.7';
-const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6'];
+export const version='0.8.8';
+const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7'];
 export const expected={
   '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'up',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
   'plugins/agentupskill/.codex-plugin/plugin.json':{name:'up',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json',extensions:{'com.openai':{onboardingSkill:'./skills/setup/SKILL.md'}}},
@@ -20,7 +20,7 @@ export const expected={
 
 // Keep in sync with delivery-release.json; the archive contains no executable
 // helper import here. A dropped pin must retain its old controls before upgrade.
-const acceptedHelperPins=['1a13bc382549a7a2a4f7fb11a1677b43f0a2af3f3ed9ec03e424db82bfd81285','512c733dad4839790be7e1b1d03c88c086cbd426855870017e03ea4f2bbeb471'];
+const acceptedHelperPins=['e62750df56baab2a2e983be2346da2a8344e58d96e36d0d216f6a09bce1da4de','1a13bc382549a7a2a4f7fb11a1677b43f0a2af3f3ed9ec03e424db82bfd81285'];
 function preserveDeliveryControls(){
   let home;
   try{home=realpathSync(resolve(process.env.CODEX_HOME??resolve(homedir(),'.codex')));}
@@ -51,6 +51,31 @@ function json(args) {
   try{return JSON.parse(command('codex',args));}
   catch(error){if(error instanceof SyntaxError)throw new Error('Codex returned an unsupported response. Update Codex and retry.');throw error;}
 }
+function nativeInstallRecord(root,ref){
+  const file=resolve(root,'.codex-marketplace-install.json');let before;
+  try{before=lstatSync(file);}catch(error){if(error.code==='ENOENT')return false;throw error;}
+  const hold='Codex installation metadata could not be verified. Review its stable file identity, readable contents and five-field pinned Git schema with no sparse paths. Preserve the record and its permissions; ask your setup operator for a reviewed compatible installer.';
+  const safe=st=>st.isFile()&&!st.isSymbolicLink()&&st.nlink===1&&st.uid===process.getuid()&&!(st.mode&0o022)&&st.size<=4096;
+  const sameFile=st=>safe(st)&&['dev','ino','size','uid','mode','mtimeMs','ctimeMs'].every(key=>st[key]===before[key]);
+  if(!safe(before))throw new Error('Codex installation metadata could not be verified: its file type, ownership, link count, size or permissions are unsafe. Preserve the record and its permissions; ask your setup operator to review it before retrying.');
+  try{
+    const fd=openSync(file,constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);let bytes;
+    try{
+      if(!sameFile(fstatSync(fd)))throw new Error();
+      const buffer=Buffer.alloc(4097);let size=0;
+      while(size<buffer.length){const n=readSync(fd,buffer,size,buffer.length-size,null);if(!n)break;size+=n;}
+      if(size!==before.size||!sameFile(fstatSync(fd))||!sameFile(lstatSync(file)))throw new Error();
+      bytes=buffer.subarray(0,size);
+    }finally{closeSync(fd);}
+    const value=JSON.parse(bytes.toString('utf8'));
+    const normalized=typeof value?.source==='string'?value.source.replace(/\/$/,'').replace(/\.git$/,''):null;
+    if(normalized!==source||!isDeepStrictEqual(value,{source_type:'git',source:value.source,ref_name:ref,revision:ref,sparse_paths:[]}))throw new Error();
+  }catch{throw new Error(hold);}
+  // Preserve the safe Git diagnostic if inspection itself fails.
+  // This exception is for native, untracked metadata only, never package content.
+  if(command('git',['-C',root,'ls-files','-z','--','.codex-marketplace-install.json']))throw new Error(hold);
+  return true;
+}
 function marketplace(ref,values=expected) {
   const result=json(['plugin','marketplace','list','--json']);
   if(!Array.isArray(result.marketplaces))throw new Error('Unsupported Codex marketplace response. Update Codex and retry.');
@@ -60,13 +85,15 @@ function marketplace(ref,values=expected) {
   if(!entry)return null;
   const registeredSource=entry.marketplaceSource?.source;
   const normalizedSource=typeof registeredSource==='string'?registeredSource.replace(/\/$/,'').replace(/\.git$/,''):null;
-  if(entry.marketplaceSource?.sourceType!=='git' || normalizedSource!==source || typeof entry.root!=='string')throw new Error('The Agent Upskill marketplace source does not match the reviewed HTTPS URL. Nothing was replaced; review it in Codex.');
-  if(command('git',['-C',entry.root,'rev-parse','HEAD']).trim()!==ref)throw new Error('The Agent Upskill marketplace has a different commit. Nothing was replaced; use Codex’s native update controls after reviewing the new version.');
-  if(command('git',['-C',entry.root,'status','--porcelain','--untracked-files=normal']).trim())throw new Error('The marketplace checkout has local changes. Nothing was replaced; review those changes before retrying.');
+  if(entry.marketplaceSource?.sourceType!=='git' || normalizedSource!==source || typeof entry.root!=='string')throw new Error('The Agent Upskill marketplace source does not match the reviewed HTTPS URL. Review it in Codex.');
+  if(command('git',['-C',entry.root,'rev-parse','HEAD']).trim()!==ref)throw new Error('The Agent Upskill marketplace has a different commit. Use Codex’s native update controls after reviewing the new version.');
+  const nativeRecord=nativeInstallRecord(entry.root,ref);
+  const changes=command('git',['-C',entry.root,'status','--porcelain','--untracked-files=all']).trim();
+  if(changes&&!(nativeRecord&&changes==='?? .codex-marketplace-install.json'))throw new Error('The marketplace checkout has local changes. Review those changes before retrying.');
   for(const [path,value] of Object.entries(values)){
     let actual;
-    try{actual=JSON.parse(readFileSync(resolve(entry.root,path),'utf8'));}catch{throw new Error('The existing marketplace could not be verified. Nothing was replaced.');}
-    if(!isDeepStrictEqual(actual,value))throw new Error('The existing marketplace differs from the reviewed package. Nothing was replaced.');
+    try{actual=JSON.parse(readFileSync(resolve(entry.root,path),'utf8'));}catch{throw new Error('The existing marketplace could not be verified.');}
+    if(!isDeepStrictEqual(actual,value))throw new Error('The existing marketplace differs from the reviewed package.');
   }
   return entry;
 }
@@ -92,9 +119,9 @@ async function publicMetadata(ref,allowOlder=false){
   let wanted=expected;
   if(allowOlder){
     const manifest=values['plugins/agentupskill/.codex-plugin/plugin.json'];
-    if(!predecessorVersions.includes(manifest?.version))throw new Error('Only reviewed up 0.6.0/0.7.0/0.8.0/0.8.1/0.8.2/0.8.3/0.8.4/0.8.5/0.8.6 predecessors can use this native update.');
+    if(!predecessorVersions.includes(manifest?.version))throw new Error(`Only reviewed up ${predecessorVersions.join('/')} predecessors can use this native update.`);
     const {extensions,...prior}=expected['plugins/agentupskill/.codex-plugin/plugin.json'];
-    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(['0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6'].includes(manifest.version)?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
+    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(['0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7'].includes(manifest.version)?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
   }
   if(!isDeepStrictEqual(values,wanted))throw new Error('The reviewed public package has unexpected metadata. Nothing was installed.');
   return values;
@@ -105,6 +132,15 @@ export async function install(ref,{upgradeFrom}={}) {
   await publicMetadata(ref);
   const prior=upgradeFrom?await publicMetadata(upgradeFrom,true):null;
   preserveDeliveryControls();
+  const recovery=(prior?`Reviewed predecessor: ${upgradeFrom}. `:'')+`Reviewed target: ${ref}. If its registration is absent, restore only the reviewed target marketplace with codex plugin marketplace add ${source} --ref ${ref} --json. Otherwise preserve the registered checkout and ask your setup operator for a reviewed compatible installer. Then retry --ref ${ref}${prior?` --upgrade-from ${upgradeFrom}`:''}. Preserve the plugin and credentials; do not remove the plugin or reset login.`;
+  let predecessorRemoved=false;
+  const targetMarketplace=(registeredNow=false)=>{
+    try{return marketplace(ref);}
+    catch(error){
+      const stage=registeredNow?`${predecessorRemoved?'The predecessor marketplace was removed. ':''}The target marketplace was registered.`:'The target marketplace is already registered.';
+      throw new Error(`${stage} Checkout verification stopped before installation could be verified. ${error.message} ${recovery}`);
+    }
+  };
   const listing=json(['plugin','marketplace','list','--json']);
   if(!Array.isArray(listing.marketplaces))throw new Error('Unsupported Codex marketplace response.');
   const candidates=listing.marketplaces.filter(entry=>entry.name===name);
@@ -114,12 +150,11 @@ export async function install(ref,{upgradeFrom}={}) {
     const entry=candidates[0];
     if(typeof entry.root!=='string')throw new Error('Unsupported marketplace root. Nothing was replaced.');
     const actual=command('git',['-C',entry.root,'rev-parse','HEAD']).trim();
-    if(actual===ref)existing=marketplace(ref);
+    if(actual===ref)existing=targetMarketplace();
     else if(prior&&actual===upgradeFrom)existing=marketplace(upgradeFrom,prior);
     else throw new Error('The marketplace has a different commit. Review the exact predecessor and use --upgrade-from; nothing was replaced.');
   }
   const current=installed({allowOlder:Boolean(prior)});
-  const recovery=prior?`Reviewed predecessor: ${upgradeFrom}. Restore only the reviewed target marketplace with codex plugin marketplace add ${source} --ref ${ref} --json, then retry --ref ${ref} --upgrade-from ${upgradeFrom}. Preserve the plugin and credentials; do not remove the plugin or reset login.`:'';
   if(current&&!existing)throw new Error('An existing plugin has no verified marketplace. Nothing was replaced. '+recovery);
   const priorVersion=prior?.['plugins/agentupskill/.codex-plugin/plugin.json'].version;
   if(current&&current.version!==version&&current.version!==priorVersion)throw new Error('Installed version does not match the reviewed predecessor. Nothing was replaced.');
@@ -128,12 +163,12 @@ export async function install(ref,{upgradeFrom}={}) {
     // The native CLI rejects a changed pinned ref for an existing source. Its
     // scoped marketplace removal retains plugin settings/cached credentials.
     // Re-add retargets only this marketplace. Never invoke plugin remove.
-    command('codex',['plugin','marketplace','remove',name]);existing=null;
+    command('codex',['plugin','marketplace','remove',name]);existing=null;predecessorRemoved=true;
   }
   if(!existing){
     try{command('codex',['plugin','marketplace','add',source,'--ref',ref,'--json']);}
     catch(error){throw new Error(error.message+' '+recovery);}
-    if(!marketplace(ref))throw new Error('Codex did not register the reviewed marketplace. Retry after checking Codex. '+recovery);
+    if(!targetMarketplace(true))throw new Error('Codex did not register the reviewed marketplace. Retry after checking Codex. '+recovery);
   }
   // Reinspect after registration; a disabled cache can be hidden while its
   // marketplace is missing. Retry must never reenable that installation.

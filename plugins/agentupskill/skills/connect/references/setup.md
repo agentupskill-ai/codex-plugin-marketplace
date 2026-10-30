@@ -6,7 +6,7 @@ before changing installation or configuration: the marketplace, plugin manifest,
 MCP manifest, setup/connect/delivery skills and references, package.json, install.mjs,
 and the delivery script with its pinned release inventory. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin up v0.8.7,
+marketplace is agentupskill-setup, plugin up v0.8.8,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
 There must be no plugin hooks, credential fields or account data. The installer and optional delivery bootstrap are the only executables; the npm
