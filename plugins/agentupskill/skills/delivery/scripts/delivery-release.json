@@ -1,35 +1,35 @@
 {
-  "origin": "https://au-skills-helper-1a13bc382549a7a2a4f7fb11a1677b43.agentupskill.workers.dev",
-  "archive_bytes": 170226,
-  "archive_sha256": "84865533693d0500f74459340d39186581904458d184f03b90c221b08e44e1ff",
-  "helper_sha256": "1a13bc382549a7a2a4f7fb11a1677b43f0a2af3f3ed9ec03e424db82bfd81285",
-  "source_commit": "2ff7daa621d48ef0cbecf712c24fa0affaae20fe",
-  "verified_at": "2026-10-29T09:54:24.454572+00:00",
-  "archive": "agentupskill-helper-1a13bc382549a7a2a4f7fb11a1677b43f0a2af3f3ed9ec03e424db82bfd81285.tgz",
+  "origin": "https://au-skills-helper-e62750df56baab2a2e983be2346da2a8.agentupskill.workers.dev",
+  "archive_bytes": 170355,
+  "archive_sha256": "a20dbd2a439b013fc9a231dd6a7a36fdaff38e66510ed447d9025f100733f3ef",
+  "helper_sha256": "e62750df56baab2a2e983be2346da2a8344e58d96e36d0d216f6a09bce1da4de",
+  "source_commit": "cfc1865e2c74f8915658e55e57f3b4968f90d01b",
+  "verified_at": "2026-10-30T20:37:04.089958+00:00",
+  "archive": "agentupskill-helper-e62750df56baab2a2e983be2346da2a8344e58d96e36d0d216f6a09bce1da4de.tgz",
   "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
   "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
   "previous_releases": [
     {
-      "origin": "https://au-skills-helper-512c733dad4839790be7e1b1d03c88c0.agentupskill.workers.dev",
-      "archive_bytes": 162484,
-      "archive_sha256": "c87929ed204898e3cdec86331f4fa77a4986b70e473a5a1c712d8951d2f9fc97",
-      "helper_sha256": "512c733dad4839790be7e1b1d03c88c086cbd426855870017e03ea4f2bbeb471",
-      "source_commit": "71eb03975da13b5316195b2864cf9eec92514060",
-      "verified_at": "2026-10-26T20:19:26.679808+00:00",
-      "archive": "agentupskill-helper-512c733dad4839790be7e1b1d03c88c086cbd426855870017e03ea4f2bbeb471.tgz",
+      "origin": "https://au-skills-helper-1a13bc382549a7a2a4f7fb11a1677b43.agentupskill.workers.dev",
+      "archive_bytes": 170226,
+      "archive_sha256": "84865533693d0500f74459340d39186581904458d184f03b90c221b08e44e1ff",
+      "helper_sha256": "1a13bc382549a7a2a4f7fb11a1677b43f0a2af3f3ed9ec03e424db82bfd81285",
+      "source_commit": "2ff7daa621d48ef0cbecf712c24fa0affaae20fe",
+      "verified_at": "2026-10-29T09:54:24.454572+00:00",
+      "archive": "agentupskill-helper-1a13bc382549a7a2a4f7fb11a1677b43f0a2af3f3ed9ec03e424db82bfd81285.tgz",
       "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
       "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
       "files": [
         {
           "path": "helper.json",
-          "bytes": 6876,
-          "sha256": "06f484a469127cdfb830e47eac6a4d765f7aa4a1eb8bd44b0dca2b5602a9e30e",
+          "bytes": 7132,
+          "sha256": "8a8ef7e387dba1a3174b9a7eae08415ba7a5ce74f1ad58f8fc49e38e15d4e869",
           "executable": false
         },
         {
           "path": "keychain.json",
           "bytes": 455,
-          "sha256": "7eddc6d2ddfa23692fbbe185413cfd84da5ca0236d7cc52f6acb6340e91d8bf3",
+          "sha256": "bbb1a222ec5faf41bf5e266ac7ea301c8c17a910bad1a887805ee92d0eab0a55",
           "executable": false
         },
         {
@@ -52,14 +52,14 @@
         },
         {
           "path": "lib/automation-command.mjs",
-          "bytes": 33082,
-          "sha256": "6767c0ec4ea5a40f1f72e84bce540541347a3102d6d9559c94a2f2adde0d3406",
+          "bytes": 37289,
+          "sha256": "88bb40875a3ad318e602770293dffc177d24911a2952d13453fdc9e3d47c6199",
           "executable": false
         },
         {
           "path": "lib/automation-enrollment.mjs",
-          "bytes": 23521,
-          "sha256": "9a4fcd30ed0442ea4579dcf3e435882d573414c7c12003fe2212df1bf52be280",
+          "bytes": 25158,
+          "sha256": "03b6c83799c24cb2d5a95c63ca2b2770d328ae8a7e8557fb76b63fca0882ea49",
           "executable": false
         },
         {
@@ -82,14 +82,14 @@
         },
         {
           "path": "lib/automation-runner.mjs",
-          "bytes": 17078,
-          "sha256": "0fdd0501c9cdbca84e1bb5e6217bad17a9137cfd997a969048a7dbd16f84bd6a",
+          "bytes": 18355,
+          "sha256": "0de7656a183e3c595f9e868dfcef2d79576e674548a8fa39b56a61a0edbcbf1d",
           "executable": false
         },
         {
           "path": "lib/automation-scheduler.mjs",
-          "bytes": 5674,
-          "sha256": "c996c17bc368c8de744fd43378601e6880fba9918276555cfb21f874b8321c49",
+          "bytes": 6446,
+          "sha256": "18c1b462d1bffc95a6446dab13c1bef15073f6f54d8cafbe4e1b4fee2460a7f0",
           "executable": false
         },
         {
@@ -99,15 +99,27 @@
           "executable": false
         },
         {
+          "path": "lib/codex-connection.mjs",
+          "bytes": 12975,
+          "sha256": "012b8e9d49da5bb2575004c07a268707a2869ddc6ab0d3a30adf75124c16fdd3",
+          "executable": false
+        },
+        {
+          "path": "lib/codex-managed-session.mjs",
+          "bytes": 2189,
+          "sha256": "3de4fb185b809c20c461d0f848925c87e2a61425490dd90dfd06277b6f5f2f9d",
+          "executable": false
+        },
+        {
           "path": "lib/connected-apply.mjs",
-          "bytes": 13921,
-          "sha256": "dabc45e67d94f28c34e8e906b51b27ad6e63c8aa318fe81c24264c2ef5a5c930",
+          "bytes": 13860,
+          "sha256": "1c8d6b5f7152021714dba3d7b4229287d010030d576ea50ec56d7f126c2717f6",
           "executable": false
         },
         {
           "path": "lib/connected-login.mjs",
-          "bytes": 11978,
-          "sha256": "043c5cde18125c18d583fa39400f322868f281fb6dced7e927faaf3aadd79ee0",
+          "bytes": 12980,
+          "sha256": "1bae7659e9ffb2dd45e04975fc5ee9bcaf76ff86222dcd95df9034e2c6f9f3f3",
           "executable": false
         },
         {
@@ -118,8 +130,8 @@
         },
         {
           "path": "lib/connected-profile.mjs",
-          "bytes": 27093,
-          "sha256": "0177e6ad4b4d7f916d53decea4cb7d4526292ae7b47050e1b203a0b4de336e56",
+          "bytes": 26751,
+          "sha256": "378b164473fd2725902711830c901910383495745b759f75b6aa2b5b363ccc43",
           "executable": false
         },
         {
@@ -172,8 +184,8 @@
         },
         {
           "path": "lib/host-prerequisites.mjs",
-          "bytes": 11810,
-          "sha256": "b8303d5b28468e8d17da2fbbda9c4537c50e83aabbacc2f6ea571215581b7cd6",
+          "bytes": 13000,
+          "sha256": "57a9c06132c6ee3b581dccbe0978c138d19ca7cd7d3e93063af1e0501cac7511",
           "executable": false
         },
         {
@@ -304,8 +316,8 @@
         },
         {
           "path": "proofs.json",
-          "bytes": 7341,
-          "sha256": "1a0723d0d7696fadc651257aad1d8881f0561b9d62fc7366e840417ac368361e",
+          "bytes": 7453,
+          "sha256": "32bee0f7e3fb19f65d9eba057db40e0dc78e456ffa7383ba1b1ea62a7912fb36",
           "executable": false
         },
         {
@@ -328,8 +340,8 @@
         },
         {
           "path": "source.json",
-          "bytes": 7863,
-          "sha256": "6e3740d574004d731dd7eb3e62591127f838564627a7225337f4e058a5c3dae6",
+          "bytes": 8200,
+          "sha256": "832090f0f45659651dfb96cbe977d3b5ac3d4b4bb3fd42f2f31b97ad79e13c7c",
           "executable": false
         }
       ]
@@ -339,13 +351,13 @@
     {
       "path": "helper.json",
       "bytes": 7132,
-      "sha256": "8a8ef7e387dba1a3174b9a7eae08415ba7a5ce74f1ad58f8fc49e38e15d4e869",
+      "sha256": "4d1ed62923cb0132339eff4ae45b33e30efedb569a86c985847c6b8ff95e4541",
       "executable": false
     },
     {
       "path": "keychain.json",
       "bytes": 455,
-      "sha256": "bbb1a222ec5faf41bf5e266ac7ea301c8c17a910bad1a887805ee92d0eab0a55",
+      "sha256": "de199e13b0c1c4f88f3d1b1eae2bdebe6e7a2fc5270bae8bcf6c95599cfb3a14",
       "executable": false
     },
     {
@@ -500,8 +512,8 @@
     },
     {
       "path": "lib/host-prerequisites.mjs",
-      "bytes": 13000,
-      "sha256": "57a9c06132c6ee3b581dccbe0978c138d19ca7cd7d3e93063af1e0501cac7511",
+      "bytes": 13637,
+      "sha256": "fa7dfd60d949b9f0925f1d72f6c39027a99643fdc2f17cc79be10dd4d65a51d3",
       "executable": false
     },
     {
@@ -632,8 +644,8 @@
     },
     {
       "path": "proofs.json",
-      "bytes": 7453,
-      "sha256": "32bee0f7e3fb19f65d9eba057db40e0dc78e456ffa7383ba1b1ea62a7912fb36",
+      "bytes": 7465,
+      "sha256": "7fdc9e60ab618c02344177458860774b7e8212b0252d2503fa17adc5999a1d58",
       "executable": false
     },
     {
@@ -657,7 +669,7 @@
     {
       "path": "source.json",
       "bytes": 8200,
-      "sha256": "832090f0f45659651dfb96cbe977d3b5ac3d4b4bb3fd42f2f31b97ad79e13c7c",
+      "sha256": "da975f2088905495f7af368b856c92782264b75cd6e0f98164544152c0c4f455",
       "executable": false
     }
   ]
