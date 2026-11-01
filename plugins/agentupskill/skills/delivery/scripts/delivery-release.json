@@ -1,35 +1,35 @@
 {
-  "origin": "https://au-skills-helper-e62750df56baab2a2e983be2346da2a8.agentupskill.workers.dev",
-  "archive_bytes": 170355,
-  "archive_sha256": "a20dbd2a439b013fc9a231dd6a7a36fdaff38e66510ed447d9025f100733f3ef",
-  "helper_sha256": "e62750df56baab2a2e983be2346da2a8344e58d96e36d0d216f6a09bce1da4de",
-  "source_commit": "cfc1865e2c74f8915658e55e57f3b4968f90d01b",
-  "verified_at": "2026-10-30T20:37:04.089958+00:00",
-  "archive": "agentupskill-helper-e62750df56baab2a2e983be2346da2a8344e58d96e36d0d216f6a09bce1da4de.tgz",
+  "origin": "https://au-skills-helper-b33f6f3140cc85869643062f2345c228.agentupskill.workers.dev",
+  "archive_bytes": 171610,
+  "archive_sha256": "615ab9640cd24866380bd1aa3b4808f42f131d6f2ac89c341f7b7d34077daaee",
+  "helper_sha256": "b33f6f3140cc85869643062f2345c2284b9d5006c43766b681e2d6c4c7404f77",
+  "source_commit": "a945c5a3962e8d6cc6c5faf8eb2302d5d0936a08",
+  "verified_at": "2026-10-31T23:02:02.461343+00:00",
+  "archive": "agentupskill-helper-b33f6f3140cc85869643062f2345c2284b9d5006c43766b681e2d6c4c7404f77.tgz",
   "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
   "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
   "previous_releases": [
     {
-      "origin": "https://au-skills-helper-1a13bc382549a7a2a4f7fb11a1677b43.agentupskill.workers.dev",
-      "archive_bytes": 170226,
-      "archive_sha256": "84865533693d0500f74459340d39186581904458d184f03b90c221b08e44e1ff",
-      "helper_sha256": "1a13bc382549a7a2a4f7fb11a1677b43f0a2af3f3ed9ec03e424db82bfd81285",
-      "source_commit": "2ff7daa621d48ef0cbecf712c24fa0affaae20fe",
-      "verified_at": "2026-10-29T09:54:24.454572+00:00",
-      "archive": "agentupskill-helper-1a13bc382549a7a2a4f7fb11a1677b43f0a2af3f3ed9ec03e424db82bfd81285.tgz",
+      "origin": "https://au-skills-helper-e62750df56baab2a2e983be2346da2a8.agentupskill.workers.dev",
+      "archive_bytes": 170355,
+      "archive_sha256": "a20dbd2a439b013fc9a231dd6a7a36fdaff38e66510ed447d9025f100733f3ef",
+      "helper_sha256": "e62750df56baab2a2e983be2346da2a8344e58d96e36d0d216f6a09bce1da4de",
+      "source_commit": "cfc1865e2c74f8915658e55e57f3b4968f90d01b",
+      "verified_at": "2026-10-30T20:37:04.089958+00:00",
+      "archive": "agentupskill-helper-e62750df56baab2a2e983be2346da2a8344e58d96e36d0d216f6a09bce1da4de.tgz",
       "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
       "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
       "files": [
         {
           "path": "helper.json",
           "bytes": 7132,
-          "sha256": "8a8ef7e387dba1a3174b9a7eae08415ba7a5ce74f1ad58f8fc49e38e15d4e869",
+          "sha256": "4d1ed62923cb0132339eff4ae45b33e30efedb569a86c985847c6b8ff95e4541",
           "executable": false
         },
         {
           "path": "keychain.json",
           "bytes": 455,
-          "sha256": "bbb1a222ec5faf41bf5e266ac7ea301c8c17a910bad1a887805ee92d0eab0a55",
+          "sha256": "de199e13b0c1c4f88f3d1b1eae2bdebe6e7a2fc5270bae8bcf6c95599cfb3a14",
           "executable": false
         },
         {
@@ -184,8 +184,8 @@
         },
         {
           "path": "lib/host-prerequisites.mjs",
-          "bytes": 13000,
-          "sha256": "57a9c06132c6ee3b581dccbe0978c138d19ca7cd7d3e93063af1e0501cac7511",
+          "bytes": 13637,
+          "sha256": "fa7dfd60d949b9f0925f1d72f6c39027a99643fdc2f17cc79be10dd4d65a51d3",
           "executable": false
         },
         {
@@ -316,8 +316,8 @@
         },
         {
           "path": "proofs.json",
-          "bytes": 7453,
-          "sha256": "32bee0f7e3fb19f65d9eba057db40e0dc78e456ffa7383ba1b1ea62a7912fb36",
+          "bytes": 7465,
+          "sha256": "7fdc9e60ab618c02344177458860774b7e8212b0252d2503fa17adc5999a1d58",
           "executable": false
         },
         {
@@ -341,7 +341,7 @@
         {
           "path": "source.json",
           "bytes": 8200,
-          "sha256": "832090f0f45659651dfb96cbe977d3b5ac3d4b4bb3fd42f2f31b97ad79e13c7c",
+          "sha256": "da975f2088905495f7af368b856c92782264b75cd6e0f98164544152c0c4f455",
           "executable": false
         }
       ]
@@ -351,13 +351,13 @@
     {
       "path": "helper.json",
       "bytes": 7132,
-      "sha256": "4d1ed62923cb0132339eff4ae45b33e30efedb569a86c985847c6b8ff95e4541",
+      "sha256": "e8fdd0150e770a48a85f79754c06d2c547e6af06436df470cc5ca369850f02a1",
       "executable": false
     },
     {
       "path": "keychain.json",
       "bytes": 455,
-      "sha256": "de199e13b0c1c4f88f3d1b1eae2bdebe6e7a2fc5270bae8bcf6c95599cfb3a14",
+      "sha256": "01834b666e94c0965a81ba50e677b015d1f6b2df4753d0107d30b600c824d4b9",
       "executable": false
     },
     {
@@ -548,8 +548,8 @@
     },
     {
       "path": "lib/native-observation.mjs",
-      "bytes": 10907,
-      "sha256": "34a958546037d6247704e419d2f1ffe3ba7f12d81c3e6c70a4910af911cd9abd",
+      "bytes": 15673,
+      "sha256": "3741ff82b4888afda419325c2880781d18381907ea9a1c42522d0c03affee7bc",
       "executable": false
     },
     {
@@ -644,8 +644,8 @@
     },
     {
       "path": "proofs.json",
-      "bytes": 7465,
-      "sha256": "7fdc9e60ab618c02344177458860774b7e8212b0252d2503fa17adc5999a1d58",
+      "bytes": 7489,
+      "sha256": "98c82af8e5056fc8f1d5d1e68d812a9d3e6861647af388ad9f142d7c63dac6bb",
       "executable": false
     },
     {
@@ -669,7 +669,7 @@
     {
       "path": "source.json",
       "bytes": 8200,
-      "sha256": "da975f2088905495f7af368b856c92782264b75cd6e0f98164544152c0c4f455",
+      "sha256": "859ab069abdbccd87202a2312462e58dea5f728b665a9ad582d4fa159656c92e",
       "executable": false
     }
   ]
