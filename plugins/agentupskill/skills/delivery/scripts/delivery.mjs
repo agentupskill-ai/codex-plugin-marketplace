@@ -284,7 +284,7 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   if(command==='automation-preview'){
     check(value.specification?.account?.principal_id===expected.principalId&&value.specification.account.workspace_id===expected.workspaceId&&value.specification.account.codex_profile===home&&value.specification.entitlement_version===expected.entitlementVersion&&/^[a-f0-9]{64}$/.test(value.confirmation_sha256),'Enrollment preview account mismatch');
     if(codexMode)check(value.specification.connection?.kind==='codex-open-app','Helper did not return the requested Codex open-app connection; do not enroll');
-    if(enrollmentIndex>=0)check(value.specification.enrollment_policy?.mode==='paused-only'&&/^[a-f0-9]{64}$/.test(value.specification.enrollment_policy.config_sha256??''),'Helper did not return the requested paused-only enrollment policy and config fingerprint; do not enroll');
+    if(enrollmentIndex>=0)check(value.specification.enrollment_policy?.mode==='paused-only'&&typeof value.specification.enrollment_policy.config_sha256==='string'&&/^[a-f0-9]{64}$/.test(value.specification.enrollment_policy.config_sha256),'Helper did not return the requested paused-only enrollment policy and config fingerprint; do not enroll');
   }
   if(command==='automation-native-home-recovery-preview'){
     const account=value.expected?.account;
