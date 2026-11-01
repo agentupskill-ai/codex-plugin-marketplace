@@ -128,6 +128,21 @@ hold; do not download a replacement as an incidental local-control action.
    Never manufacture this approval from general setup approval or a website save.
    Runtime, root, browser-proof or integrity holds remain holds.
 
+   If the approved enrollment must stay paused for native recovery/migration, add
+   --enrollment-mode paused-only on automation-preview (and --connection codex for
+   the selected Codex mode). It requires existing native registration, unchanged
+   config, fresh unenrolled state, absent scheduler and safe empty retained storage.
+   The new preview binds that restriction and fingerprint into its exact digest.
+   Show the complete preview and obtain separate exact confirmation before enroll.
+   This enrollment invocation records incomplete ownership paused for migration,
+   initializes an empty ledger and stops before setup, scheduler registration,
+   resume or delivery. Never use ordinary enrollment as a paused-only workaround.
+   Preserve partial paused evidence on failure; do not retry or repair silently.
+   Recovery, migration/all-old-workflows confirmation and activation retain their
+   separate approvals. The fingerprint restricts initial consent only; later
+   approved commands retain their own checks. Old helper digests cannot approve
+   changed helper bytes.
+
 6. Enrollment warnings are substantive: ordinary website additions/explicit version
    choices/removals within baseline need no repeated Apply, but updates can mix old
    instructions/new files or interrupt active/resumed changed-skill work; removal

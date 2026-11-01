@@ -1,6 +1,6 @@
 {
   "name": "@agentupskill/codex-plugin-install",
-  "version": "0.8.9",
+  "version": "0.8.10",
   "type": "module",
   "bin": {
     "agentupskill-install": "./install.mjs"
