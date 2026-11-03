@@ -1,363 +1,24 @@
 {
-  "origin": "https://au-skills-helper-18369021e0dc5122460195589c02ee85.agentupskill.workers.dev",
-  "archive_bytes": 172902,
-  "archive_sha256": "b2e9bfdefb3e4b98bebd8c44b7b71e75d33a48f78b897879759e32c9ac3a2843",
-  "helper_sha256": "18369021e0dc5122460195589c02ee85385d0bd30f420876bf3f9773cb0977f9",
-  "source_commit": "5290dac560a9c302348fbe105407e889d8447617",
-  "verified_at": "2026-11-02T20:39:59.783273+00:00",
-  "archive": "agentupskill-helper-18369021e0dc5122460195589c02ee85385d0bd30f420876bf3f9773cb0977f9.tgz",
+  "origin": "https://au-skills-helper-c02791d54e5a6a24ca7314180f960ed1.agentupskill.workers.dev",
+  "archive_bytes": 172958,
+  "archive_sha256": "35e7853a33ce3577d8b9773988979dffa218b0c0fbae8e59e2d53223cec1b4a2",
+  "helper_sha256": "c02791d54e5a6a24ca7314180f960ed159a031964c5ae701754f02af21196ce3",
+  "source_commit": "b2806cf8e0d7391cc33b3994c4189208d6f9f846",
+  "verified_at": "2026-11-03T16:18:05.827004+00:00",
+  "archive": "agentupskill-helper-c02791d54e5a6a24ca7314180f960ed159a031964c5ae701754f02af21196ce3.tgz",
   "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
   "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
-  "previous_releases": [
-    {
-      "origin": "https://au-skills-helper-df4f393d6988f89c2e35df08e1245f57.agentupskill.workers.dev",
-      "archive_bytes": 173088,
-      "archive_sha256": "97bfee7c6fb6f298b62785fb7e96b7122c710574f83565018253feed8fc937c2",
-      "helper_sha256": "df4f393d6988f89c2e35df08e1245f571c0657659e165e042d79b7abcf688f40",
-      "source_commit": "e961f323ac702bc115a0123da107aead46e0414d",
-      "verified_at": "2026-11-01T20:52:01.366069+00:00",
-      "archive": "agentupskill-helper-df4f393d6988f89c2e35df08e1245f571c0657659e165e042d79b7abcf688f40.tgz",
-      "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
-      "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
-      "files": [
-        {
-          "path": "helper.json",
-          "bytes": 7132,
-          "sha256": "d0cbe192ae8308af839e786aa66c071864c1926f5787345427e8b0c106b50c4b",
-          "executable": false
-        },
-        {
-          "path": "keychain.json",
-          "bytes": 455,
-          "sha256": "20d62aaa07c24549d6582766f504b88974ae304e23f54c0d1e086a063d3f05ec",
-          "executable": false
-        },
-        {
-          "path": "lib/artifact-endpoint.mjs",
-          "bytes": 863,
-          "sha256": "cb51703c2361502d5c8d377d31003f437c1eb300301ec9ed06762a79322376a0",
-          "executable": false
-        },
-        {
-          "path": "lib/automatic-approval.mjs",
-          "bytes": 1125,
-          "sha256": "43cb444ca5b8d3c76ba5c7b3e3c73af0a8fda02042f3a4e7eceb209610c15620",
-          "executable": false
-        },
-        {
-          "path": "lib/automation-admission.mjs",
-          "bytes": 4590,
-          "sha256": "dfcc83694221a752a7fb6d80068491d52dc544b445ab115504687d971d4debea",
-          "executable": false
-        },
-        {
-          "path": "lib/automation-command.mjs",
-          "bytes": 39659,
-          "sha256": "f0fec820855be472dc4c60c7efe3b65a65e3c0520d370d4f781221b2c1c010b4",
-          "executable": false
-        },
-        {
-          "path": "lib/automation-enrollment.mjs",
-          "bytes": 26484,
-          "sha256": "becfae9aeabaf4d166a88d8a9ba28e6238a50414961bdd8101454f4dead0fb28",
-          "executable": false
-        },
-        {
-          "path": "lib/automation-policy.mjs",
-          "bytes": 7391,
-          "sha256": "378bed14e7960b0c9eff8c5f7528a61e4651f7c3986b88a971468c3f1e367aaf",
-          "executable": false
-        },
-        {
-          "path": "lib/automation-removal.mjs",
-          "bytes": 10835,
-          "sha256": "89740ae38224f8cd07ec2e149fecde9ed4e7cf4b800b0c906cb888acb048fcbc",
-          "executable": false
-        },
-        {
-          "path": "lib/automation-retry.mjs",
-          "bytes": 6934,
-          "sha256": "0a90d1f8d3ce77387dab6727d9ef6e27e60cef43d2020c6a75f1aaffa24c6969",
-          "executable": false
-        },
-        {
-          "path": "lib/automation-runner.mjs",
-          "bytes": 18355,
-          "sha256": "0de7656a183e3c595f9e868dfcef2d79576e674548a8fa39b56a61a0edbcbf1d",
-          "executable": false
-        },
-        {
-          "path": "lib/automation-scheduler.mjs",
-          "bytes": 6839,
-          "sha256": "1c17534885b5293699080b1a99511aab90dcd4ce322e1d6e1d900eaf0cff1115",
-          "executable": false
-        },
-        {
-          "path": "lib/catalog.mjs",
-          "bytes": 10375,
-          "sha256": "498bebcda07bf51c32dab025e37afcfb6d59e191b5a8ab40332d4974df64d09d",
-          "executable": false
-        },
-        {
-          "path": "lib/codex-connection.mjs",
-          "bytes": 12975,
-          "sha256": "012b8e9d49da5bb2575004c07a268707a2869ddc6ab0d3a30adf75124c16fdd3",
-          "executable": false
-        },
-        {
-          "path": "lib/codex-managed-session.mjs",
-          "bytes": 2189,
-          "sha256": "3de4fb185b809c20c461d0f848925c87e2a61425490dd90dfd06277b6f5f2f9d",
-          "executable": false
-        },
-        {
-          "path": "lib/connected-apply.mjs",
-          "bytes": 13860,
-          "sha256": "1c8d6b5f7152021714dba3d7b4229287d010030d576ea50ec56d7f126c2717f6",
-          "executable": false
-        },
-        {
-          "path": "lib/connected-login.mjs",
-          "bytes": 12980,
-          "sha256": "1bae7659e9ffb2dd45e04975fc5ee9bcaf76ff86222dcd95df9034e2c6f9f3f3",
-          "executable": false
-        },
-        {
-          "path": "lib/connected-plan.mjs",
-          "bytes": 7740,
-          "sha256": "04dbf839ba45efe4ae831868c5094a3e2116defe4fb89d7afac96e1a754a5809",
-          "executable": false
-        },
-        {
-          "path": "lib/connected-profile.mjs",
-          "bytes": 26751,
-          "sha256": "378b164473fd2725902711830c901910383495745b759f75b6aa2b5b363ccc43",
-          "executable": false
-        },
-        {
-          "path": "lib/contracts.mjs",
-          "bytes": 13164,
-          "sha256": "8b6826a555f7b9fb13d8d1f6b2f24e45737deb7bf265a287a0ea256ee6b9fc5f",
-          "executable": false
-        },
-        {
-          "path": "lib/device-policy.mjs",
-          "bytes": 3724,
-          "sha256": "8867b26ec777634704b39cbc23fa5c43443f57d8cfc90e4fd8fcf1d8554ef2bb",
-          "executable": false
-        },
-        {
-          "path": "lib/filesystem-environment.mjs",
-          "bytes": 6550,
-          "sha256": "a06f26d53e2d7e668c95969c25d04fa255b24903e88aec99d5a65e0e7587386b",
-          "executable": false
-        },
-        {
-          "path": "lib/filesystem-migration.mjs",
-          "bytes": 35189,
-          "sha256": "57dee2c55e1fabb131e7366cd187c215dae3c9c6595d039b4a0b15b26772b074",
-          "executable": false
-        },
-        {
-          "path": "lib/filesystem-store.mjs",
-          "bytes": 51695,
-          "sha256": "8c0df7d498a44063a7cb2e25e63533f3e0ebd416b06b8b2d561ee643b626f2e1",
-          "executable": false
-        },
-        {
-          "path": "lib/git-provenance.mjs",
-          "bytes": 9444,
-          "sha256": "aa34ad381f01ce82373664d255594f53cbe2ed852960e3d6a2871a17b12d14cf",
-          "executable": false
-        },
-        {
-          "path": "lib/helper-package.mjs",
-          "bytes": 13342,
-          "sha256": "0a71c67df7600bfa1f595aac1ab3d9936c8151b7665764eb5791ce7ab56178ba",
-          "executable": false
-        },
-        {
-          "path": "lib/host-preflight.mjs",
-          "bytes": 8007,
-          "sha256": "1d9a93d1bed7442a1908dfb8368ac397892ce74baf7d42101863f267feac763b",
-          "executable": false
-        },
-        {
-          "path": "lib/host-prerequisites.mjs",
-          "bytes": 13637,
-          "sha256": "fa7dfd60d949b9f0925f1d72f6c39027a99643fdc2f17cc79be10dd4d65a51d3",
-          "executable": false
-        },
-        {
-          "path": "lib/hosted-transport.mjs",
-          "bytes": 18799,
-          "sha256": "d6c4b56d59c823c252869a81007b82c68224bee7ddabd612ca999e106e5011c2",
-          "executable": false
-        },
-        {
-          "path": "lib/loopback-callback.mjs",
-          "bytes": 1352,
-          "sha256": "b76f6c72871888116de018c24aacf0dd2a029a15b5521f70fbb50f8989d9db59",
-          "executable": false
-        },
-        {
-          "path": "lib/macos-keychain.mjs",
-          "bytes": 12386,
-          "sha256": "c296e644043ff0e6a931eb82d89edcc285c5f268105973518dee4b83e48c14d4",
-          "executable": false
-        },
-        {
-          "path": "lib/migration-backup.mjs",
-          "bytes": 15310,
-          "sha256": "8995426416cd0f0f93fef048f946601ed09936db8b41ceeebcd399553e61f722",
-          "executable": false
-        },
-        {
-          "path": "lib/native-files.mjs",
-          "bytes": 7028,
-          "sha256": "f71a945886469acff1c7183d86727d0a5416387d6414c013070719ad1f1b8044",
-          "executable": false
-        },
-        {
-          "path": "lib/native-observation.mjs",
-          "bytes": 15673,
-          "sha256": "3741ff82b4888afda419325c2880781d18381907ea9a1c42522d0c03affee7bc",
-          "executable": false
-        },
-        {
-          "path": "lib/native-registration.mjs",
-          "bytes": 2305,
-          "sha256": "3a8a2d742fa25881288b8e51b0f798d24daaf4873676cd06e9bc48f8a281bbd6",
-          "executable": false
-        },
-        {
-          "path": "lib/native-store.mjs",
-          "bytes": 60877,
-          "sha256": "1e2464af8fa5857e10fead0358e149a0eeaa6b6a7a338b6ef68361d8a2878a77",
-          "executable": false
-        },
-        {
-          "path": "lib/protected-data-directory.mjs",
-          "bytes": 1618,
-          "sha256": "3106476151d7e7596e159394380701c5ff4a4570fca3f3307bb03feaefc82652",
-          "executable": false
-        },
-        {
-          "path": "lib/release-registry.mjs",
-          "bytes": 26566,
-          "sha256": "1bc68099f18be5efd1b499a54f1c4059af58dc7ed09f149e6e9b7704e823ba71",
-          "executable": false
-        },
-        {
-          "path": "lib/release-trust.mjs",
-          "bytes": 8327,
-          "sha256": "5fa1091104cc7d4b866c921f430b8089ccd35e9a6563161462e9d9ff35749651",
-          "executable": false
-        },
-        {
-          "path": "lib/runtime-integrity.mjs",
-          "bytes": 2684,
-          "sha256": "070f1bd1798d84de6d32e5bf69e6a6dc5685c7dcd61a111ef828930d190c3950",
-          "executable": false
-        },
-        {
-          "path": "lib/unified-patch.mjs",
-          "bytes": 2234,
-          "sha256": "748892cc65781259c657252b0067f450cad778962ab5e6cacb62631374ec5d08",
-          "executable": false
-        },
-        {
-          "path": "lib/vendor/smol-toml-1.9.1/date.mjs",
-          "bytes": 6490,
-          "sha256": "a356a73aaf08b5c62a8a4faf5ace00a03e1ba1f94955ddd09db0dbf89d6ef424",
-          "executable": false
-        },
-        {
-          "path": "lib/vendor/smol-toml-1.9.1/error.mjs",
-          "bytes": 3144,
-          "sha256": "281326e4b52d9d3e7f20da8b33bc408132c3b8c292099f77f65a116d003eb9cb",
-          "executable": false
-        },
-        {
-          "path": "lib/vendor/smol-toml-1.9.1/extract.mjs",
-          "bytes": 13925,
-          "sha256": "42c845273c5fc986a29645b2ca68e881135aefa0b11d7ee0777175087def5402",
-          "executable": false
-        },
-        {
-          "path": "lib/vendor/smol-toml-1.9.1/parse.mjs",
-          "bytes": 6722,
-          "sha256": "ec5fdf3afc8118ad76db9d43b8df595f9226a541550f78e330e26e48f0dac54b",
-          "executable": false
-        },
-        {
-          "path": "lib/vendor/smol-toml-1.9.1/primitive.mjs",
-          "bytes": 7928,
-          "sha256": "37542f5bb18b2bd50747acff3dec75dbeafccda4f1c4ca29853899a3bd884717",
-          "executable": false
-        },
-        {
-          "path": "lib/vendor/smol-toml-1.9.1/struct.mjs",
-          "bytes": 6511,
-          "sha256": "1fe614728bbb92358a413d5f21ed6e1a0fc7b5a26a26f3248d7b3d5994a7a6e0",
-          "executable": false
-        },
-        {
-          "path": "lib/vendor/smol-toml-1.9.1/util.mjs",
-          "bytes": 2871,
-          "sha256": "47435f1feed3ea8e7b47a0c53b4285e46f150ab36368e579f5f154fbe0b36511",
-          "executable": false
-        },
-        {
-          "path": "native/keychain-bridge",
-          "bytes": 54064,
-          "sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
-          "executable": true
-        },
-        {
-          "path": "proofs.json",
-          "bytes": 8193,
-          "sha256": "09e4e927adfe8f4cbf8fd427b7ae7a4485b633ef2c85fc8058714a0e49c281e6",
-          "executable": false
-        },
-        {
-          "path": "root.json",
-          "bytes": 494,
-          "sha256": "9071c00497a381196dae24126247e18ce121d5ada14073b0da4eb1e71d6422c5",
-          "executable": false
-        },
-        {
-          "path": "scripts/connected-skills.mjs",
-          "bytes": 11783,
-          "sha256": "9425eb55749e8831372f50f63b7bd162da912d6ac2638319dd626b9420cae20f",
-          "executable": false
-        },
-        {
-          "path": "scripts/keychain-bridge.c",
-          "bytes": 5078,
-          "sha256": "7b8a9f0418d85628f2a418cb48039e4f0b3ae3885ca4a1693a5479e5d0e98062",
-          "executable": false
-        },
-        {
-          "path": "source.json",
-          "bytes": 8200,
-          "sha256": "c6545c863139ffc09333f31e88cb2a2c78b72dd759bf0cb96d53acaff9c94880",
-          "executable": false
-        }
-      ]
-    }
-  ],
   "files": [
     {
       "path": "helper.json",
       "bytes": 7132,
-      "sha256": "a81dcbb4c139c1d27c5bddbc9fdfdcd52ed55f4b332d482be5e51d2083fb71ee",
+      "sha256": "f4ebf84af65aec1acaaf0c2758b003d464f08db4ccee32dee742025fafb59473",
       "executable": false
     },
     {
       "path": "keychain.json",
       "bytes": 455,
-      "sha256": "cd4c5d5867bb9ca22ffd758124f9bf35afd8cd4dc791b729c24f87f6490c0ca9",
+      "sha256": "1c0aacef3d7c5482f613768ab7219ac602f4353b1404631d5277f7f8768d61a8",
       "executable": false
     },
     {
@@ -512,8 +173,8 @@
     },
     {
       "path": "lib/host-prerequisites.mjs",
-      "bytes": 14273,
-      "sha256": "6d1a847cde2d498e2c565557e1eaab906a51337dbc59f826d5369ee50d20ec2b",
+      "bytes": 14840,
+      "sha256": "15648c973b56efb123ca9ca1c696f2b8b79f0195ace3542ae172f50993a323c8",
       "executable": false
     },
     {
@@ -645,7 +306,7 @@
     {
       "path": "proofs.json",
       "bytes": 7569,
-      "sha256": "71d7e25b412ae74bfbb2bbea260dbcb25ab851ce5e81204976c243c44fb68453",
+      "sha256": "a13719b6fd1b94eff88f8a06ebd235afbaa102437e34164ba23d350359e2b723",
       "executable": false
     },
     {
@@ -669,8 +330,347 @@
     {
       "path": "source.json",
       "bytes": 8200,
-      "sha256": "daeb1bca8990247a57e3a175e81a1ddf5006128e016caedf35fd082714714268",
+      "sha256": "52e2a4bcf553d02aaf49dbb2f3312b3a683601cd071a4036c9ba0e4824af24ca",
       "executable": false
+    }
+  ],
+  "previous_releases": [
+    {
+      "origin": "https://au-skills-helper-18369021e0dc5122460195589c02ee85.agentupskill.workers.dev",
+      "archive_bytes": 172902,
+      "archive_sha256": "b2e9bfdefb3e4b98bebd8c44b7b71e75d33a48f78b897879759e32c9ac3a2843",
+      "helper_sha256": "18369021e0dc5122460195589c02ee85385d0bd30f420876bf3f9773cb0977f9",
+      "source_commit": "5290dac560a9c302348fbe105407e889d8447617",
+      "verified_at": "2026-11-02T20:39:59.783273+00:00",
+      "archive": "agentupskill-helper-18369021e0dc5122460195589c02ee85385d0bd30f420876bf3f9773cb0977f9.tgz",
+      "root_pin": "d50e6fd5b4335705e279d94b0bdc5956ed8ad08922186f02bd2d662fd6a161e2",
+      "keychain_sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
+      "files": [
+        {
+          "path": "helper.json",
+          "bytes": 7132,
+          "sha256": "a81dcbb4c139c1d27c5bddbc9fdfdcd52ed55f4b332d482be5e51d2083fb71ee",
+          "executable": false
+        },
+        {
+          "path": "keychain.json",
+          "bytes": 455,
+          "sha256": "cd4c5d5867bb9ca22ffd758124f9bf35afd8cd4dc791b729c24f87f6490c0ca9",
+          "executable": false
+        },
+        {
+          "path": "lib/artifact-endpoint.mjs",
+          "bytes": 863,
+          "sha256": "cb51703c2361502d5c8d377d31003f437c1eb300301ec9ed06762a79322376a0",
+          "executable": false
+        },
+        {
+          "path": "lib/automatic-approval.mjs",
+          "bytes": 1125,
+          "sha256": "43cb444ca5b8d3c76ba5c7b3e3c73af0a8fda02042f3a4e7eceb209610c15620",
+          "executable": false
+        },
+        {
+          "path": "lib/automation-admission.mjs",
+          "bytes": 4590,
+          "sha256": "dfcc83694221a752a7fb6d80068491d52dc544b445ab115504687d971d4debea",
+          "executable": false
+        },
+        {
+          "path": "lib/automation-command.mjs",
+          "bytes": 39659,
+          "sha256": "f0fec820855be472dc4c60c7efe3b65a65e3c0520d370d4f781221b2c1c010b4",
+          "executable": false
+        },
+        {
+          "path": "lib/automation-enrollment.mjs",
+          "bytes": 26484,
+          "sha256": "becfae9aeabaf4d166a88d8a9ba28e6238a50414961bdd8101454f4dead0fb28",
+          "executable": false
+        },
+        {
+          "path": "lib/automation-policy.mjs",
+          "bytes": 7391,
+          "sha256": "378bed14e7960b0c9eff8c5f7528a61e4651f7c3986b88a971468c3f1e367aaf",
+          "executable": false
+        },
+        {
+          "path": "lib/automation-removal.mjs",
+          "bytes": 10835,
+          "sha256": "89740ae38224f8cd07ec2e149fecde9ed4e7cf4b800b0c906cb888acb048fcbc",
+          "executable": false
+        },
+        {
+          "path": "lib/automation-retry.mjs",
+          "bytes": 6934,
+          "sha256": "0a90d1f8d3ce77387dab6727d9ef6e27e60cef43d2020c6a75f1aaffa24c6969",
+          "executable": false
+        },
+        {
+          "path": "lib/automation-runner.mjs",
+          "bytes": 18355,
+          "sha256": "0de7656a183e3c595f9e868dfcef2d79576e674548a8fa39b56a61a0edbcbf1d",
+          "executable": false
+        },
+        {
+          "path": "lib/automation-scheduler.mjs",
+          "bytes": 6839,
+          "sha256": "1c17534885b5293699080b1a99511aab90dcd4ce322e1d6e1d900eaf0cff1115",
+          "executable": false
+        },
+        {
+          "path": "lib/catalog.mjs",
+          "bytes": 10375,
+          "sha256": "498bebcda07bf51c32dab025e37afcfb6d59e191b5a8ab40332d4974df64d09d",
+          "executable": false
+        },
+        {
+          "path": "lib/codex-connection.mjs",
+          "bytes": 12975,
+          "sha256": "012b8e9d49da5bb2575004c07a268707a2869ddc6ab0d3a30adf75124c16fdd3",
+          "executable": false
+        },
+        {
+          "path": "lib/codex-managed-session.mjs",
+          "bytes": 2189,
+          "sha256": "3de4fb185b809c20c461d0f848925c87e2a61425490dd90dfd06277b6f5f2f9d",
+          "executable": false
+        },
+        {
+          "path": "lib/connected-apply.mjs",
+          "bytes": 13860,
+          "sha256": "1c8d6b5f7152021714dba3d7b4229287d010030d576ea50ec56d7f126c2717f6",
+          "executable": false
+        },
+        {
+          "path": "lib/connected-login.mjs",
+          "bytes": 12980,
+          "sha256": "1bae7659e9ffb2dd45e04975fc5ee9bcaf76ff86222dcd95df9034e2c6f9f3f3",
+          "executable": false
+        },
+        {
+          "path": "lib/connected-plan.mjs",
+          "bytes": 7740,
+          "sha256": "04dbf839ba45efe4ae831868c5094a3e2116defe4fb89d7afac96e1a754a5809",
+          "executable": false
+        },
+        {
+          "path": "lib/connected-profile.mjs",
+          "bytes": 26751,
+          "sha256": "378b164473fd2725902711830c901910383495745b759f75b6aa2b5b363ccc43",
+          "executable": false
+        },
+        {
+          "path": "lib/contracts.mjs",
+          "bytes": 13164,
+          "sha256": "8b6826a555f7b9fb13d8d1f6b2f24e45737deb7bf265a287a0ea256ee6b9fc5f",
+          "executable": false
+        },
+        {
+          "path": "lib/device-policy.mjs",
+          "bytes": 3724,
+          "sha256": "8867b26ec777634704b39cbc23fa5c43443f57d8cfc90e4fd8fcf1d8554ef2bb",
+          "executable": false
+        },
+        {
+          "path": "lib/filesystem-environment.mjs",
+          "bytes": 6550,
+          "sha256": "a06f26d53e2d7e668c95969c25d04fa255b24903e88aec99d5a65e0e7587386b",
+          "executable": false
+        },
+        {
+          "path": "lib/filesystem-migration.mjs",
+          "bytes": 35189,
+          "sha256": "57dee2c55e1fabb131e7366cd187c215dae3c9c6595d039b4a0b15b26772b074",
+          "executable": false
+        },
+        {
+          "path": "lib/filesystem-store.mjs",
+          "bytes": 51695,
+          "sha256": "8c0df7d498a44063a7cb2e25e63533f3e0ebd416b06b8b2d561ee643b626f2e1",
+          "executable": false
+        },
+        {
+          "path": "lib/git-provenance.mjs",
+          "bytes": 9444,
+          "sha256": "aa34ad381f01ce82373664d255594f53cbe2ed852960e3d6a2871a17b12d14cf",
+          "executable": false
+        },
+        {
+          "path": "lib/helper-package.mjs",
+          "bytes": 13342,
+          "sha256": "0a71c67df7600bfa1f595aac1ab3d9936c8151b7665764eb5791ce7ab56178ba",
+          "executable": false
+        },
+        {
+          "path": "lib/host-preflight.mjs",
+          "bytes": 8007,
+          "sha256": "1d9a93d1bed7442a1908dfb8368ac397892ce74baf7d42101863f267feac763b",
+          "executable": false
+        },
+        {
+          "path": "lib/host-prerequisites.mjs",
+          "bytes": 14273,
+          "sha256": "6d1a847cde2d498e2c565557e1eaab906a51337dbc59f826d5369ee50d20ec2b",
+          "executable": false
+        },
+        {
+          "path": "lib/hosted-transport.mjs",
+          "bytes": 18799,
+          "sha256": "d6c4b56d59c823c252869a81007b82c68224bee7ddabd612ca999e106e5011c2",
+          "executable": false
+        },
+        {
+          "path": "lib/loopback-callback.mjs",
+          "bytes": 1352,
+          "sha256": "b76f6c72871888116de018c24aacf0dd2a029a15b5521f70fbb50f8989d9db59",
+          "executable": false
+        },
+        {
+          "path": "lib/macos-keychain.mjs",
+          "bytes": 12386,
+          "sha256": "c296e644043ff0e6a931eb82d89edcc285c5f268105973518dee4b83e48c14d4",
+          "executable": false
+        },
+        {
+          "path": "lib/migration-backup.mjs",
+          "bytes": 15310,
+          "sha256": "8995426416cd0f0f93fef048f946601ed09936db8b41ceeebcd399553e61f722",
+          "executable": false
+        },
+        {
+          "path": "lib/native-files.mjs",
+          "bytes": 7028,
+          "sha256": "f71a945886469acff1c7183d86727d0a5416387d6414c013070719ad1f1b8044",
+          "executable": false
+        },
+        {
+          "path": "lib/native-observation.mjs",
+          "bytes": 15673,
+          "sha256": "3741ff82b4888afda419325c2880781d18381907ea9a1c42522d0c03affee7bc",
+          "executable": false
+        },
+        {
+          "path": "lib/native-registration.mjs",
+          "bytes": 2305,
+          "sha256": "3a8a2d742fa25881288b8e51b0f798d24daaf4873676cd06e9bc48f8a281bbd6",
+          "executable": false
+        },
+        {
+          "path": "lib/native-store.mjs",
+          "bytes": 60877,
+          "sha256": "1e2464af8fa5857e10fead0358e149a0eeaa6b6a7a338b6ef68361d8a2878a77",
+          "executable": false
+        },
+        {
+          "path": "lib/protected-data-directory.mjs",
+          "bytes": 1618,
+          "sha256": "3106476151d7e7596e159394380701c5ff4a4570fca3f3307bb03feaefc82652",
+          "executable": false
+        },
+        {
+          "path": "lib/release-registry.mjs",
+          "bytes": 26566,
+          "sha256": "1bc68099f18be5efd1b499a54f1c4059af58dc7ed09f149e6e9b7704e823ba71",
+          "executable": false
+        },
+        {
+          "path": "lib/release-trust.mjs",
+          "bytes": 8327,
+          "sha256": "5fa1091104cc7d4b866c921f430b8089ccd35e9a6563161462e9d9ff35749651",
+          "executable": false
+        },
+        {
+          "path": "lib/runtime-integrity.mjs",
+          "bytes": 2684,
+          "sha256": "070f1bd1798d84de6d32e5bf69e6a6dc5685c7dcd61a111ef828930d190c3950",
+          "executable": false
+        },
+        {
+          "path": "lib/unified-patch.mjs",
+          "bytes": 2234,
+          "sha256": "748892cc65781259c657252b0067f450cad778962ab5e6cacb62631374ec5d08",
+          "executable": false
+        },
+        {
+          "path": "lib/vendor/smol-toml-1.9.1/date.mjs",
+          "bytes": 6490,
+          "sha256": "a356a73aaf08b5c62a8a4faf5ace00a03e1ba1f94955ddd09db0dbf89d6ef424",
+          "executable": false
+        },
+        {
+          "path": "lib/vendor/smol-toml-1.9.1/error.mjs",
+          "bytes": 3144,
+          "sha256": "281326e4b52d9d3e7f20da8b33bc408132c3b8c292099f77f65a116d003eb9cb",
+          "executable": false
+        },
+        {
+          "path": "lib/vendor/smol-toml-1.9.1/extract.mjs",
+          "bytes": 13925,
+          "sha256": "42c845273c5fc986a29645b2ca68e881135aefa0b11d7ee0777175087def5402",
+          "executable": false
+        },
+        {
+          "path": "lib/vendor/smol-toml-1.9.1/parse.mjs",
+          "bytes": 6722,
+          "sha256": "ec5fdf3afc8118ad76db9d43b8df595f9226a541550f78e330e26e48f0dac54b",
+          "executable": false
+        },
+        {
+          "path": "lib/vendor/smol-toml-1.9.1/primitive.mjs",
+          "bytes": 7928,
+          "sha256": "37542f5bb18b2bd50747acff3dec75dbeafccda4f1c4ca29853899a3bd884717",
+          "executable": false
+        },
+        {
+          "path": "lib/vendor/smol-toml-1.9.1/struct.mjs",
+          "bytes": 6511,
+          "sha256": "1fe614728bbb92358a413d5f21ed6e1a0fc7b5a26a26f3248d7b3d5994a7a6e0",
+          "executable": false
+        },
+        {
+          "path": "lib/vendor/smol-toml-1.9.1/util.mjs",
+          "bytes": 2871,
+          "sha256": "47435f1feed3ea8e7b47a0c53b4285e46f150ab36368e579f5f154fbe0b36511",
+          "executable": false
+        },
+        {
+          "path": "native/keychain-bridge",
+          "bytes": 54064,
+          "sha256": "fa3bd62411663f5e3ecb8ae52649fc3b55074b4b64dc5e77f58ace35513b5dfb",
+          "executable": true
+        },
+        {
+          "path": "proofs.json",
+          "bytes": 7569,
+          "sha256": "71d7e25b412ae74bfbb2bbea260dbcb25ab851ce5e81204976c243c44fb68453",
+          "executable": false
+        },
+        {
+          "path": "root.json",
+          "bytes": 494,
+          "sha256": "9071c00497a381196dae24126247e18ce121d5ada14073b0da4eb1e71d6422c5",
+          "executable": false
+        },
+        {
+          "path": "scripts/connected-skills.mjs",
+          "bytes": 11783,
+          "sha256": "9425eb55749e8831372f50f63b7bd162da912d6ac2638319dd626b9420cae20f",
+          "executable": false
+        },
+        {
+          "path": "scripts/keychain-bridge.c",
+          "bytes": 5078,
+          "sha256": "7b8a9f0418d85628f2a418cb48039e4f0b3ae3885ca4a1693a5479e5d0e98062",
+          "executable": false
+        },
+        {
+          "path": "source.json",
+          "bytes": 8200,
+          "sha256": "daeb1bca8990247a57e3a175e81a1ddf5006128e016caedf35fd082714714268",
+          "executable": false
+        }
+      ]
     }
   ]
 }
