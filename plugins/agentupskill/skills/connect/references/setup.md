@@ -6,13 +6,16 @@ before changing installation or configuration: the marketplace, plugin manifest,
 MCP manifest, setup/connect/delivery skills and references, package.json, install.mjs,
 and the delivery script with its pinned release inventory. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin up v0.8.12,
+marketplace is agentupskill-setup, plugin up v0.8.13,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
 There must be no plugin hooks, credential fields or account data. The installer and optional delivery bootstrap are the only executables; the npm
 package has no dependencies or lifecycle scripts. Read each before running it. Inspect supported Codex commands and existing
 configuration without exposing credentials. Stop on conflicting source, commit,
 version or connection. Preserve other marketplaces, plugins and credentials.
+
+The installer supports macOS with POSIX file-ownership checks. Other platforms
+require a separately reviewed installer; do not bypass the platform check.
 
 Before any install or login, present one combined approval: the exact source,
 commit and version; registration/install only if needed; combined Individual sign-in
@@ -45,14 +48,27 @@ codex plugin add up@agentupskill-setup. Do not make the customer run
 Terminal commands or download a ZIP. An existing agentupskill@agentupskill-setup installation needs a reviewed native
 rename migration before installing up@agentupskill-setup. Stop instead of adding a
 second copy of its connector. Preserve the installed plugin and credentials.
-For an enabled up 0.6.0, 0.7.0, 0.8.0, 0.8.1, 0.8.2, 0.8.3, 0.8.4, 0.8.5, 0.8.6, 0.8.7, 0.8.8, 0.8.9, 0.8.10 or 0.8.11 installation, inspect its exact predecessor commit
+For an enabled up 0.6.0, 0.7.0, 0.8.0, 0.8.1, 0.8.2, 0.8.3, 0.8.4, 0.8.5, 0.8.6, 0.8.7, 0.8.8, 0.8.9, 0.8.10, 0.8.11 or 0.8.12 installation, inspect its exact predecessor commit
 and metadata too. Explicitly include the native pinned-marketplace retarget and
-plugin update in the approval. Use the reviewed installer with --upgrade-from
+plugin update in the approval. Before that approval, inspect the enrollment and
+retained helper pin as data only. If it will become the previous pin, explain
+that it retains local controls but account delivery operations and rollback stay
+held until explicit renewal with a new enrollment preview and consent. Do not
+infer renewal approval from plugin-update approval. Show the signed helper's
+renewal deadline and preserve the separate recovery, migration and activation
+gates. Use the reviewed installer with --upgrade-from
 <verified predecessor commit>. It uses only scoped native marketplace controls
 and plugin add, with readback; it never uninstalls the plugin or resets credentials.
 Unknown versions, disabled entries, legacy names and conflicting sources remain
 holds. On retry preserve the completed marketplace update and inspect installed
-state before repeating anything.
+state before repeating anything. A partial or unverified checkout remains a hold;
+do not delete it to force a retry. Successful installation requires exact cache
+file readback against the reviewed checkout, not just a matching version. For
+an already enabled target with a safe inventory but incomplete or changed bytes,
+one retry can recopy it through native plugin add and verify again. Disabled
+plugins, unsafe links/permissions and unexpected files remain holds. If a native
+step fails, report whether it left the plugin enabled and its cache unverified;
+stop using unverified content and review it through Codex plugin controls.
 
 Discover the actual registered name of the plugin's bundled connector; do not
 require or invent a plugin prefix. Check that no host or project MCP entry shadows

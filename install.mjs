@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import {spawnSync} from 'node:child_process';
-import {readFileSync,realpathSync,lstatSync,statSync,constants,openSync,closeSync,readSync,fstatSync} from 'node:fs';
+import {readFileSync,readdirSync,realpathSync,lstatSync,statSync,constants,openSync,closeSync,readSync,fstatSync} from 'node:fs';
 import {homedir} from 'node:os';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
@@ -10,8 +10,8 @@ import {isDeepStrictEqual} from 'node:util';
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
 const pluginId='up@'+name;
-export const version='0.8.12';
-const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7','0.8.8','0.8.9','0.8.10','0.8.11'];
+export const version='0.8.13';
+const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7','0.8.8','0.8.9','0.8.10','0.8.11','0.8.12'];
 export const expected={
   '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'up',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
   'plugins/agentupskill/.codex-plugin/plugin.json':{name:'up',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json',extensions:{'com.openai':{onboardingSkill:'./skills/setup/SKILL.md'}}},
@@ -27,14 +27,18 @@ function preserveDeliveryControls(){
   catch(error){if(error.code==='ENOENT')return;throw error;}
   const s=statSync(home),identity=JSON.stringify([home,s.dev,s.ino,s.uid]);
   const locator=resolve(homedir(),'Library','Application Support','AgentUpskill Shared Skills','delivery','helper-'+createHash('sha256').update(identity).digest('hex')+'.json');
+  let enrolled=false,previousPin=false;
   for(const [file,enrollment] of [[resolve(home,'shared-skills-automation','enrollment.json'),true],[locator,false]]){
     let st;
     try{st=lstatSync(file);}catch(error){if(error.code==='ENOENT')continue;throw error;}
     const hold='Delivery state needs review before this plugin upgrade. Keep the installed plugin and use its delivery skill to inspect, pause, detach through the exact removal preview, settle migration recovery and retire its helper reference before retrying. If no delivery skill is installed, stop and ask your setup operator to review the original standalone helper controls or the published 0.8.1 recovery route. Do not delete state, reset credentials or stop a live operation manually.';
     if(!st.isFile()||st.isSymbolicLink()||st.nlink!==1||st.uid!==process.getuid()||(st.mode&0o077)||st.size>(enrollment?2*1024*1024:4096))throw new Error(hold);
     let value;try{value=JSON.parse(readFileSync(file,'utf8'));}catch{throw new Error(hold);}
-    if(!acceptedHelperPins.includes(enrollment?value?.preview?.helper_sha256:value?.helper_sha256))throw new Error(hold);
+    const pin=enrollment?value?.preview?.helper_sha256:value?.helper_sha256;
+    if(!acceptedHelperPins.includes(pin))throw new Error(hold);
+    enrolled=true;previousPin||=pin!==acceptedHelperPins[0];
   }
+  return {enrolled,previousPin};
 }
 
 function command(binary,args) {
@@ -109,6 +113,48 @@ function installed({allowOlder=false}={}) {
   return entry;
 }
 
+function installedCache(entry,root,{allowMissing=false}={}){
+  const home=realpathSync(resolve(process.env.CODEX_HOME??resolve(homedir(),'.codex')));
+  const cache=resolve(home,'plugins','cache',name,'up',entry.version);
+  const hold='The installed Agent Upskill cache does not exactly match the reviewed package. Preserve the cache and credentials; ask your setup operator for a reviewed native repair before retrying.';
+  let contentMismatch=false,reason='The cache contents or stable file identity could not be inspected safely.';
+  const unsafe='The cache has an unsafe file type, ownership, link count or permissions.';
+  const compare=(reviewed,installed)=>{
+    const a=lstatSync(reviewed),b=lstatSync(installed);
+    if(a.isSymbolicLink()||b.isSymbolicLink()||b.uid!==process.getuid()||(b.mode&0o022)){reason=unsafe;throw new Error();}
+    if(a.isDirectory()&&b.isDirectory()){
+      const files=readdirSync(reviewed).sort(),actual=readdirSync(installed).sort();
+      if(actual.some(file=>!files.includes(file))){reason='The cache contains unexpected files requiring operator review.';throw new Error();}
+      if(files.length!==actual.length)contentMismatch=true;
+      for(const file of actual)compare(resolve(reviewed,file),resolve(installed,file));
+    }else if(a.isFile()&&b.isFile()&&b.nlink===1){
+      if(a.size!==b.size||(a.mode&0o111)!==(b.mode&0o111))contentMismatch=true;
+      const same=st=>['dev','ino','size','uid','mode','nlink','mtimeMs','ctimeMs'].every(key=>st[key]===b[key]);
+      const fd=openSync(installed,constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);
+      try{
+        if(!same(fstatSync(fd)))throw new Error();
+        const bytes=Buffer.alloc(a.size+1);let size=0;
+        while(size<bytes.length){const n=readSync(fd,bytes,size,bytes.length-size,null);if(!n)break;size+=n;}
+        if(!same(fstatSync(fd))||!same(lstatSync(installed)))throw new Error();
+        if(size!==a.size||!readFileSync(reviewed).equals(bytes.subarray(0,size)))contentMismatch=true;
+      }finally{closeSync(fd);}
+    }else{reason=unsafe;throw new Error();}
+  };
+  try{
+    // Check every existing ancestor even when an interrupted copy left no cache.
+    let directory=home,missing=false;
+    for(const part of ['.','plugins','cache',name,'up',entry.version]){
+      directory=resolve(directory,part);let st;
+      try{st=lstatSync(directory);}catch(error){if(error.code!=='ENOENT')throw error;missing=true;break;}
+      if(!st.isDirectory()||st.isSymbolicLink()||st.uid!==process.getuid()||(st.mode&0o022)||realpathSync(directory)!==directory){reason='A cache ancestor has an unsafe directory type, ownership, permissions or noncanonical path.';throw new Error();}
+    }
+    if(missing){if(allowMissing)return;contentMismatch=true;}
+    else compare(resolve(root,'plugins','agentupskill'),cache);
+  }catch{throw new Error(hold+' '+reason);}
+  // Only a complete safe inventory can permit native recopy of changed content.
+  if(contentMismatch){const error=new Error(hold);error.canRecopy=true;throw error;}
+}
+
 async function publicMetadata(ref,allowOlder=false){
   const values={};
   for(const path of Object.keys(expected)){
@@ -121,17 +167,18 @@ async function publicMetadata(ref,allowOlder=false){
     const manifest=values['plugins/agentupskill/.codex-plugin/plugin.json'];
     if(!predecessorVersions.includes(manifest?.version))throw new Error(`Only reviewed up ${predecessorVersions.join('/')} predecessors can use this native update.`);
     const {extensions,...prior}=expected['plugins/agentupskill/.codex-plugin/plugin.json'];
-    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(['0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7','0.8.8','0.8.9','0.8.10','0.8.11'].includes(manifest.version)?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
+    wanted={...expected,'plugins/agentupskill/.codex-plugin/plugin.json':{...(predecessorVersions.filter(v=>v.startsWith('0.8.')).includes(manifest.version)?expected['plugins/agentupskill/.codex-plugin/plugin.json']:prior),version:manifest.version}};
   }
   if(!isDeepStrictEqual(values,wanted))throw new Error('The reviewed public package has unexpected metadata. Nothing was installed.');
   return values;
 }
 export async function install(ref,{upgradeFrom}={}) {
+  if(process.platform!=='darwin'||typeof process.getuid!=='function')throw new Error('This installer is supported on macOS only. No registration or installation was attempted; ask your setup operator for a reviewed installer for this platform.');
   if(typeof ref!=='string' || !/^[a-f0-9]{40}$/.test(ref))throw new Error('Supply the reviewed 40-character commit from your Agent Upskill setup page with --ref. Moving branches are not accepted.');
   if(upgradeFrom!==undefined&&(!/^[a-f0-9]{40}$/.test(upgradeFrom)||upgradeFrom===ref))throw new Error('Use the exact different reviewed predecessor commit with --upgrade-from.');
   await publicMetadata(ref);
   const prior=upgradeFrom?await publicMetadata(upgradeFrom,true):null;
-  preserveDeliveryControls();
+  const {enrolled,previousPin}=preserveDeliveryControls()??{};
   const recovery=(prior?`Reviewed predecessor: ${upgradeFrom}. `:'')+`Reviewed target: ${ref}. If its registration is absent, restore only the reviewed target marketplace with codex plugin marketplace add ${source} --ref ${ref} --json. Otherwise preserve the registered checkout and ask your setup operator for a reviewed compatible installer. Then retry --ref ${ref}${prior?` --upgrade-from ${upgradeFrom}`:''}. Preserve the plugin and credentials; do not remove the plugin or reset login.`;
   let predecessorRemoved=false;
   const targetMarketplace=(registeredNow=false)=>{
@@ -145,20 +192,26 @@ export async function install(ref,{upgradeFrom}={}) {
   if(!Array.isArray(listing.marketplaces))throw new Error('Unsupported Codex marketplace response.');
   const candidates=listing.marketplaces.filter(entry=>entry.name===name);
   if(candidates.length>1)throw new Error('Conflicting Agent Upskill marketplaces. Nothing was replaced.');
-  let existing=null;
+  let existing=null,predecessor=false;
   if(candidates.length){
     const entry=candidates[0];
     if(typeof entry.root!=='string')throw new Error('Unsupported marketplace root. Nothing was replaced.');
-    const actual=command('git',['-C',entry.root,'rev-parse','HEAD']).trim();
+    let actual;
+    try{actual=command('git',['-C',entry.root,'rev-parse','HEAD']).trim();}
+    catch(error){throw new Error('The registered marketplace checkout is incomplete or unavailable. '+error.message+' '+recovery);}
     if(actual===ref)existing=targetMarketplace();
-    else if(prior&&actual===upgradeFrom)existing=marketplace(upgradeFrom,prior);
+    else if(prior&&actual===upgradeFrom){existing=marketplace(upgradeFrom,prior);predecessor=true;}
     else throw new Error('The marketplace has a different commit. Review the exact predecessor and use --upgrade-from; nothing was replaced.');
   }
-  const current=installed({allowOlder:Boolean(prior)});
-  if(current&&!existing)throw new Error('An existing plugin has no verified marketplace. Nothing was replaced. '+recovery);
+  let current;
+  try{current=installed({allowOlder:Boolean(prior)});}
+  catch(error){throw new Error(error.message+' '+recovery);}
+  if(current&&!existing&&!prior)throw new Error('An existing plugin has no verified marketplace. Nothing was replaced. '+recovery);
   const priorVersion=prior?.['plugins/agentupskill/.codex-plugin/plugin.json'].version;
   if(current&&current.version!==version&&current.version!==priorVersion)throw new Error('Installed version does not match the reviewed predecessor. Nothing was replaced.');
-  if(existing&&prior&&command('git',['-C',existing.root,'rev-parse','HEAD']).trim()===upgradeFrom){
+  if(current&&predecessor)installedCache(current,existing.root);
+  if(enrolled&&prior&&(predecessor||!existing||current?.version!==version))console.error(previousPin?'The enrolled delivery helper uses a previous pin. Account delivery and rollback require renewal with a new preview and consent before a helper update. This plugin upgrade preserves enrollment and credentials.':'This plugin upgrade preserves delivery enrollment and credentials. Delivery controls remain bound to their enrolled helper pin; inspect delivery after upgrading before using controls from the new plugin.');
+  if(predecessor){
     if(current&&current.version!==prior['plugins/agentupskill/.codex-plugin/plugin.json'].version)throw new Error('Installed version does not match the reviewed predecessor. Nothing was replaced.');
     // The native CLI rejects a changed pinned ref for an existing source. Its
     // scoped marketplace removal retains plugin settings/cached credentials.
@@ -166,15 +219,47 @@ export async function install(ref,{upgradeFrom}={}) {
     command('codex',['plugin','marketplace','remove',name]);existing=null;predecessorRemoved=true;
   }
   if(!existing){
+    // Native listing can hide a disabled installation until its marketplace is restored.
     try{command('codex',['plugin','marketplace','add',source,'--ref',ref,'--json']);}
     catch(error){throw new Error(error.message+' '+recovery);}
-    if(!targetMarketplace(true))throw new Error('Codex did not register the reviewed marketplace. Retry after checking Codex. '+recovery);
+    existing=targetMarketplace(true);
+    if(!existing)throw new Error('Codex did not register the reviewed marketplace. Retry after checking Codex. '+recovery);
   }
   // Reinspect after registration; a disabled cache can be hidden while its
   // marketplace is missing. Retry must never reenable that installation.
   const afterRegistration=installed({allowOlder:Boolean(prior)});
-  if(!afterRegistration||afterRegistration.version!==version)command('codex',['plugin','add',pluginId]);
-  if(!installed())throw new Error('Codex did not report an enabled installation. Check its plugin controls and retry.');
+  if(afterRegistration&&afterRegistration.version!==version&&afterRegistration.version!==priorVersion)throw new Error('Installed version does not match the reviewed predecessor. Preserve the registered target marketplace, plugin and credentials; review the exact predecessor before retrying.');
+  const failureState=error=>{
+    let state='The installed plugin and cache state could not be verified.',targetRetry=false;
+    try{
+      const observed=json(['plugin','list','--marketplace',name,'--json']);
+      const matches=observed.installed.filter(entry=>entry.pluginId===pluginId&&entry.installed===true);
+      if(matches.length===1&&typeof matches[0].enabled==='boolean'){
+        const entry=matches[0];let verified=false;
+        if(entry.version===version)try{installedCache(entry,existing.root);verified=true;targetRetry=entry.enabled;}catch(cacheError){targetRetry=entry.enabled&&cacheError.canRecopy===true;}
+        const observedVersion=entry.version===version?`${version} (target)`:predecessorVersions.includes(entry.version)?`${entry.version} (predecessor)`:'unrecognized';
+        state=`Codex reports the plugin ${entry.enabled?'enabled':'disabled'}; the reviewed target cache is ${verified?'verified':'unverified'}. Installed version: ${observedVersion}.`;
+      }else if(matches.length===0)state='Codex reports no installed plugin; the target cache is unverified.';
+    }catch{}
+    const action=targetRetry?'This already enabled target can retry this installer; ordinary changed content permits one native recopy from the verified checkout.':'This state requires setup-operator repair before retrying. Do not use native recopy to bypass unsafe ownership, links, permissions, ancestors or unexpected files, or to activate a stale target over a predecessor.';
+    return new Error(error.message+' '+state+' If content is unverified or state is unknown, stop using the plugin and use Codex’s native plugin controls to disable and inspect it with your setup operator. Preserve the cache and credentials. '+action+' '+recovery);
+  };
+  let needsAdd=!afterRegistration||afterRegistration.version!==version;
+  if(!needsAdd){
+    try{installedCache(afterRegistration,existing.root);}
+    catch(error){if(!error.canRecopy)throw failureState(error);needsAdd=true;}
+  }else{
+    // Never activate stale target bytes left by a previous interrupted copy.
+    try{installedCache({version},existing.root,{allowMissing:true});}catch(error){throw failureState(error);}
+  }
+  if(needsAdd){
+    try{command('codex',['plugin','add',pluginId]);}
+    catch(error){throw failureState(error);}
+  }
+  let confirmed;
+  try{confirmed=installed();}catch(error){throw failureState(error);}
+  if(!confirmed)throw failureState(new Error('Codex did not report an enabled installation. Check its plugin controls and retry.'));
+  try{installedCache(confirmed,existing.root);}catch(error){throw failureState(error);}
   return `Agent Upskill ${version} is installed. Return to your setup chat for browser sign-in and verification. Installation alone does not confirm connection or memory access.`;
 }
 
