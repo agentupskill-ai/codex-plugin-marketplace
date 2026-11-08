@@ -11,6 +11,19 @@ const pins=[release,...release.previous_releases];
 const fail=message=>{throw new Error(message);};
 const check=(value,message)=>{if(!value)fail(message);};
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+// The helper can emit arbitrary error.message; expose only reviewed static reasons.
+const helperFailureReasons=[
+  'Session lock identity mismatch; preserve for inspection',
+  'Session lock owner is still alive',
+  'Keychain helper may still be in flight; inspect it before manual marker removal'
+];
+function subprocessFailure(result){
+  const details=[];
+  if(Number.isInteger(result.status)&&result.status>=0&&result.status<=255)details.push(`exit=${result.status}`);
+  if(['SIGHUP','SIGINT','SIGQUIT','SIGABRT','SIGKILL','SIGPIPE','SIGTERM','SIGSEGV','SIGBUS','SIGILL'].includes(result.signal))details.push(`signal=${result.signal}`);
+  if(['ETIMEDOUT','ENOBUFS','ENOENT','EACCES','EPERM','EAGAIN','ENOMEM','E2BIG','ENOEXEC','EINTR','ECANCELED'].includes(result.error?.code))details.push(`code=${result.error.code}`);
+  return details.length?` (${details.join(', ')})`:'';
+}
 const exists=file=>{try{fs.lstatSync(file);return true;}catch(e){if(e.code==='ENOENT')return false;throw e;}};
 const denyACL=/^\s*\d+:\s+(?:(?:user|group):\S+|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})\s+(?:inherited\s+)?deny\s+[a-z][a-z_,]*(?:\s+inherited)?\s*$/;
 // This bootstrap cannot import its packaged verifier until every imported byte
@@ -95,7 +108,12 @@ export async function verifyPinnedHelper(root,trust,{pin=release,allowExpired=fa
     result={...verifyHelperPackage(root,pin.root_pin,{...options,now:Date.parse(pin.verified_at)}),trust_expired:true};
   }
   check(result.helper_sha256===pin.helper_sha256&&result.source_commit===pin.source_commit&&result.keychain_sha256===pin.keychain_sha256,'Signed helper differs from the pinned release');
-  return result;
+  // Read expiry only after signature, inventory and release identity checks.
+  const metadata=name=>JSON.parse(fs.readFileSync(path.join(root,name),'utf8'));
+  const helper_expires_at=metadata('helper.json').signed.expires_at;
+  const chain=pin.files.some(file=>file.path==='root-chain.json')?metadata('root-chain.json').roots:[];
+  const root_expires_at=(chain.at(-1)??metadata('root.json')).signed.expires_at;
+  return {...result,helper_expires_at,root_expires_at,renewal_deadline:new Date(Math.min(Date.parse(helper_expires_at),Date.parse(root_expires_at))).toISOString()};
 }
 function supported(){
   check(process.platform==='darwin'&&process.arch==='arm64'&&Number(process.versions.node.split('.')[0])>=22,'Delivery setup requires trusted Node >=22 on macOS arm64; runtime admission is checked separately');
@@ -105,7 +123,7 @@ export async function inspectDelivery({home,storage=defaultStorage(),trust=trust
   platformCheck();let root=targetFor(storage);
   check(acceptedPins.length>=1&&acceptedPins.length<=2&&new Set(acceptedPins.map(p=>p.helper_sha256)).size===acceptedPins.length,'Review at most the current and one previous immutable helper pin');
   const select=hash=>{const pin=acceptedPins.find(p=>p.helper_sha256===hash);check(pin,'Unknown helper pin; preserve it for review');return pin;};
-  const describe=(root,result,pin)=>({state:'verified-helper',helper_root:root,helper_sha256:result.helper_sha256,keychain_sha256:result.keychain_sha256??pin.keychain_sha256,trust_expired:result.trust_expired??false,previous_helper:pin.helper_sha256!==acceptedPins[0].helper_sha256,codex_open_app_supported:['lib/codex-connection.mjs','lib/codex-managed-session.mjs'].every(name=>pin.files.some(file=>file.path===name)),availability:'not-checked'});
+  const describe=(root,result,pin)=>({state:'verified-helper',helper_root:root,helper_sha256:result.helper_sha256,keychain_sha256:result.keychain_sha256??pin.keychain_sha256,trust_expired:result.trust_expired??false,helper_expires_at:result.helper_expires_at,root_expires_at:result.root_expires_at,renewal_deadline:result.renewal_deadline,previous_helper:pin.helper_sha256!==acceptedPins[0].helper_sha256,codex_open_app_supported:['lib/codex-connection.mjs','lib/codex-managed-session.mjs'].every(name=>pin.files.some(file=>file.path===name)),availability:'not-checked'});
   // A customer may already have enrolled the released standalone helper. Treat
   // its private record as data until the candidate's complete bytes are pinned;
   // then use the released ownership reader. Never relocate an enrolled helper.
@@ -150,27 +168,39 @@ export async function prepareDelivery({home,storage=defaultStorage(),trust=trust
   const root=missing?current.helper_root:targetFor(storage);trust(path.dirname(root));
   if(exists(root))return inspectDelivery({home,storage,trust,verifyPackage,platformCheck,allowExpired:repair});
   const stageParent=missing?path.dirname(root):helpers;
-  check(fs.readdirSync(stageParent).filter(n=>n.startsWith('.agentupskill-helper-stage-')).length<8,'Helper setup staging capacity reached; preserve unpublished stages and review them before another attempt');
-  const stage=path.join(stageParent,`.agentupskill-helper-stage-${randomUUID()}`);fs.mkdirSync(stage,{mode:0o700});
-  // Failed stages are retained. A retry uses a new exclusive stage and never
-  // overlays, adopts or executes bytes from a prior partial download.
+  const stages=fs.readdirSync(stageParent).filter(n=>n.startsWith('.agentupskill-helper-stage-'));
+  let retained=stages.length;
+  // Bounded, nonrecursive cleanup cannot erase partial extraction evidence.
+  for(const name of stages.slice(0,8)){
+    if(!/^\.agentupskill-helper-stage-[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(name))continue;
+    const prior=path.join(stageParent,name);
+    try{privateDirectory(prior,trust);fs.rmdirSync(prior);retained--;}
+    catch{/* Nonempty or unsafe prior stages stay available for inspection. */}
+  }
+  check(retained<8,'Helper setup staging capacity reached; preserve unpublished stages and review them before another attempt');
   const response=await fetcher(`${pin.origin}/${pin.archive}`,{redirect:'error',signal:AbortSignal.timeout(30000)});
   check(response.ok&&response.body,'Pinned helper download unavailable; completed setup is preserved');
   const chunks=[];let total=0;
   for await(const chunk of response.body){total+=chunk.length;check(total<=pin.archive_bytes,'Helper archive exceeds its pinned size');chunks.push(chunk);}
   const bytes=Buffer.concat(chunks);
   check(bytes.length===pin.archive_bytes&&sha(bytes)===pin.archive_sha256,'Helper archive hash mismatch; no downloaded code was imported');
-  const archive=path.join(stage,'download.tgz');fs.writeFileSync(archive,bytes,{flag:'wx',mode:0o600});
+  const stage=path.join(stageParent,`.agentupskill-helper-stage-${randomUUID()}`);fs.mkdirSync(stage,{mode:0o700});
+  const archive=path.join(stage,'download.tgz');
+  try{fs.writeFileSync(archive,bytes,{flag:'wx',mode:0o600});}
+  catch(error){
+    if(error.code==='ENOENT')fail('Helper setup stage disappeared during concurrent setup; preserve retained state and retry after the active setup run finishes');
+    throw error;
+  }
   const env={PATH:'/usr/bin:/bin',HOME:os.homedir(),LC_ALL:'C'};
   const listing=run('/usr/bin/tar',['-tzf',archive],{encoding:'utf8',shell:false,timeout:10000,maxBuffer:65536,env});
   const prefix='agentupskill-helper-'+pin.helper_sha256;
   check(!listing.error&&listing.status===0&&!listing.signal&&typeof listing.stdout==='string'&&listing.stdout.trim().split('\n').every(p=>
-    (p===prefix+'/'||p.startsWith(prefix+'/'))&&/^[A-Za-z0-9._/-]+$/.test(p)&&!p.replace(/\/$/,'').split('/').some(s=>s==='..'||s==='.'||s==='')),'Invalid archive listing');
+    (p===prefix+'/'||p.startsWith(prefix+'/'))&&/^[A-Za-z0-9._/-]+$/.test(p)&&!p.replace(/\/$/,'').split('/').some(s=>s==='..'||s==='.'||s==='')),`Invalid archive listing${subprocessFailure(listing)}`);
   // Only this exact independently pinned archive reaches the system extractor.
   // It contains regular files/directories only; the full inventory is rechecked.
   const oldMask=process.umask(0o077);let extracted;
   try{extracted=run('/usr/bin/tar',['-xzf',archive,'--no-same-owner','--no-same-permissions','-C',stage],{encoding:'utf8',shell:false,timeout:10000,maxBuffer:65536,env});}finally{process.umask(oldMask);}
-  check(!extracted.error&&extracted.status===0&&!extracted.signal,'Helper extraction failed; retain the private stage and retry');
+  check(!extracted.error&&extracted.status===0&&!extracted.signal,`Helper extraction failed${subprocessFailure(extracted)}; retain the private stage and retry`);
   const staged=path.join(stage,prefix);await verifyPackage(staged,trust,{pin,allowExpired:repair});
   // Complete concurrent installs remain intact.
   // ponytail: rename can replace a raced empty directory from the same trusted
@@ -208,7 +238,7 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   check(accountCommands.has(command)||localCommands.has(command),'Unsupported delivery setup command');
   const {home,expected,flags=[]}=options;
   check(path.isAbsolute(home??'')&&fs.realpathSync(home)===home&&fs.statSync(home).isDirectory(),'Use the real existing Codex home');
-  check(!flags.includes('--codex-home')&&!flags.includes('--keychain-helper')&&!flags.includes('--keychain-sha256')&&!flags.includes('--root-pin')&&!flags.includes('--service')&&!flags.includes('--artifact-origin')&&!flags.includes('--artifact-layout')&&!flags.includes('--switch-account'),'Fixed account/trust arguments cannot be replaced');
+  check(!flags.some(flag=>['--codex-home','--keychain-helper','--keychain-sha256','--root-pin','--service','--artifact-origin','--artifact-layout','--switch-account'].includes(flag.split('=')[0])),'Fixed account/trust arguments cannot be replaced');
   const connectionIndex=flags.indexOf('--connection');
   check(!flags.some(flag=>flag.startsWith('--connection='))&&(connectionIndex<0||command==='automation-preview'&&flags.lastIndexOf('--connection')===connectionIndex&&flags[connectionIndex+1]==='codex'),'Use --connection codex only once on automation-preview; later commands use the confirmed enrollment');
   const enrollmentIndex=flags.indexOf('--enrollment-mode');
@@ -255,12 +285,13 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   const remembered=!info.existing_enrollment||rememberHelper(storage,home,root,trust,info.helper_sha256);
   if(needsAccount)check(remembered,'Retained helper reference conflicts; preserve it and use local removal/retirement before new account operations');
   trust(path.dirname(node));
-  const report=value=>info.trust_expired||info.previous_helper||!remembered?{...value,helper_trust_expired:info.trust_expired??false,previous_helper:info.previous_helper??false,renewal_required:Boolean(info.trust_expired||info.previous_helper),helper_reference_conflict:!remembered}:value;
+  const report=value=>({...value,...(info.renewal_deadline?{helper_expires_at:info.helper_expires_at,root_expires_at:info.root_expires_at,renewal_deadline:info.renewal_deadline}:{}),...(info.trust_expired||info.previous_helper||!remembered?{helper_trust_expired:info.trust_expired??false,previous_helper:info.previous_helper??false,renewal_required:Boolean(info.trust_expired||info.previous_helper),helper_reference_conflict:!remembered}:{})});
   let exactOutput;
   const execute=(cmd,args=[])=>{
     const auth=['login','status','logout'].includes(cmd)?['--keychain-helper',path.join(root,'native/keychain-bridge'),'--keychain-sha256',info.keychain_sha256??release.keychain_sha256]:[];
     const r=run(node,[path.join(root,'scripts/connected-skills.mjs'),cmd,'--codex-home',home,...auth,...args],{encoding:'utf8',shell:false,timeout:900000,maxBuffer:4*1024*1024,env:{HOME:os.homedir(),PATH:'/usr/bin:/bin:/usr/sbin:/sbin',LANG:'en_US.UTF-8'}});
-    check(!r.error&&r.status===0&&!r.signal,`Delivery step ${cmd} failed or was interrupted. ${typeof r.stderr==='string'&&r.stderr.startsWith('Shared Skills login: ')?r.stderr.slice(0,4096).trim():'Inspect local status and retained evidence before retry.'} Completed steps are preserved.`);
+    const reason=typeof r.stderr==='string'&&r.stderr.length<=512?helperFailureReasons.find(message=>r.stderr.trim()==='Shared Skills login: '+message):undefined;
+    check(!r.error&&r.status===0&&!r.signal,`Delivery step ${cmd} failed or was interrupted${subprocessFailure(r)}. ${reason?reason+'. ':''}Inspect local status and retained evidence before retry. Completed steps are preserved.`);
     try{const value=JSON.parse(r.stdout);exactOutput=r.stdout;return value;}catch{fail('Unsupported helper response; do not claim success');}
   };
   const sameAccount=value=>check(value.state==='signed-in-local'&&value.service==='https://app.agentupskill.ai'&&value.codex_profile===home&&value.principal_id===expected?.principalId&&value.workspace_id===expected?.workspaceId&&value.entitlement_version===expected?.entitlementVersion,'Helper account differs from the connected website account; preserve credentials and stop before enrollment. Inspect status and obtain separate explicit approval for helper logout before retrying login');
@@ -269,9 +300,9 @@ export async function runDelivery(command,options,{storage=defaultStorage(),insp
   }
   if(command==='login'){
     const current=execute('status');
-    if(current.state!=='signed-out'){sameAccount(current);return current;}
+    if(current.state!=='signed-out'){sameAccount(current);return report(current);}
     check(current.codex_profile===home,'Helper status home mismatch');
-    const value=execute('login',['--service','https://app.agentupskill.ai',...flags]);sameAccount(value);return value;
+    const value=execute('login',['--service','https://app.agentupskill.ai',...flags]);sameAccount(value);return report(value);
   }
   if(command==='logout'){
     check(flags.length===4&&flags[0]==='--confirmed-principal'&&flags[2]==='--confirmed-workspace'&&flags[1]&&flags[3],'Explicitly approve the inspected helper principal/workspace before helper logout');

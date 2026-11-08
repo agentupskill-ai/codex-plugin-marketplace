@@ -5,16 +5,44 @@ description: Save useful conversation context to your Agent Upskill Individual m
 
 Use the agentupskill-bundled-connect MCP connector bundled with this plugin.
 Discover its actual registered name; stop if a host or project entry shadows it.
-Preserve other connectors and credentials. If the required tools are unavailable,
-sign in using codex mcp login <registered name> --scopes memory:identity,memory:read,memory:write
-for save, or --scopes memory:identity,memory:read for sync. Let the user choose
-their account and approve the browser consent. Do not approve it for them.
-Do not request permission-management, lifecycle or Skills scopes. Discover the
-tools again after login; if they remain unavailable, report that result. Never
-substitute a local Python runtime, Git checkout, direct GitHub call or another MCP
-server for this customer memory route. Installing the plugin alone grants no access.
-Use the actual conversation identifier supplied by the client environment
-(CODEX_THREAD_ID in Codex); do not invent it or group by a title or date.
+Preserve other connectors and credentials. Missing tools are not proof of missing
+authorization. First retry discovery or the supported Codex reload in this same
+chat; do not reinstall, reset access or re-login merely to expose tools.
+If an authorization error confirms missing or expired sign-in or insufficient
+required Memory access, recover with explicit browser consent. Also enter this
+path when the latest approval record or the user confirms that the requested
+operation needs a Memory scope not yet approved, even after successful discovery
+with no authorization error. A valid read-only grant still needs Memory write
+consent for Save; a valid Skills-only grant needs the requested Memory scopes.
+Missing tools alone establish neither condition.
+Establish the complete previously approved scope set from the prior setup/chat
+approval record or the user's explicit confirmation of that complete set. Use
+the latest approval, including later reductions; never restore withdrawn scopes
+from an older record. A current combined Individual setup approval means these
+six scopes:
+memory:identity,memory:read,memory:write,skills:identity,skills:read,skills:write.
+That approval record is the source for preserving consent; it is not evidence
+that a current token is valid. Never open Keychain items, OAuth credential files
+or token stores to discover scopes. A tool listing does not establish them.
+If the prior set is unknown, ask the user to confirm it and keep recovery held
+until established; do not guess or silently narrow access.
+For an existing grant, preserve every already approved Memory and Skills scope
+and include memory:identity,memory:read,memory:write needed for save; never replace a broader
+grant with a narrower one. For example, prior Memory read-only plus an explicit
+Save request needs Memory identity/read/write; prior combined setup retains all
+six scopes even for Sync. Show the complete proposed scope union before re-login.
+Only for a confirmed first-time Memory-only connection, use codex mcp login
+<registered name> --scopes memory:identity,memory:read,memory:write.
+For an existing connection, pass its verified approved scope union explicitly
+to --scopes. Never use unscoped login. Do not add new Skills, permission-management
+or Memory lifecycle access as part of save. Let the user choose their account
+and approve the actual browser consent; a tool listing or token refresh grants
+no additional access. Do not collect credentials or approve on their behalf.
+Discover the tools again after login; if they remain unavailable, report that
+result. Never substitute a local Python runtime, Git checkout, direct GitHub call
+or another MCP server for this customer memory route. Installing the plugin alone
+grants no access. Use the actual conversation identifier supplied by the client
+environment (CODEX_THREAD_ID in Codex); do not invent it or group by a title or date.
 
 
 An explicit request to save authorizes immediate publication after your content
