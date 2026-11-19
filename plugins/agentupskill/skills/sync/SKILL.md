@@ -53,11 +53,10 @@ relevant complete compiled topic pages. A sourceFingerprint is not a page body
 hash. Follow bounded discovery pages only as needed; keep the
 same selection, sourceCommit and query/focus for continuations. An index is not
 loaded context.
-Start an ordinary covered question with at most one useful project-orientation
-document and at most three relevant complete topic pages. Do not load every
-current note, the aggregate item catalog or raw history by default. If the needed
-complete pages exceed the admitted reading budget, report the limit and omissions;
-never truncate a page and claim complete knowledge. Reuse stable role/key and
+For an ordinary covered question, start with one useful project-orientation
+document and the most relevant complete topic pages. Continue to additional
+relevant pages when their evidence is needed. Do not load every current note,
+the aggregate item catalog or raw history by default. Reuse stable role/key and
 document identities after renames; title similarity does not establish identity.
 
 When query is advertised and the user named a topic, use a useful word query,
@@ -113,6 +112,12 @@ knowledge-first discovery unavailable. Empty knowledge is not proof of no source
 Do not replace a missing exact original with a summary or a later current note.
 
 Call sync with the actual conversationId, selected paths and index sourceCommit.
+Use index reading-cost metadata and the discovered Sync schema to choose a packet
+size and byte budget. The expanded Individual schema admits up to 64 paths or
+historical citations and a 4 MiB packet budget. Request only what is relevant and
+can be read in full. When needed, request smaller packets or a higher supported
+budget for a complete document. Honor explicit omissions, continue at the same
+sourceCommit, and report anything still beyond the service limits.
 For a cited historical revision, inspect support for sync.historical and pass
 historical: [{path,revisionId,contentHash}] with that pinned sourceCommit. Verify
 the complete returned document matches the exact revision and hash. When explicit
