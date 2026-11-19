@@ -69,9 +69,9 @@ text. Between them use relevant H2 subsections for verified current position,
 failed attempts and why they failed, and unresolved assumptions. Omit empty topics.
 If work is complete, state that no required action remains with completion evidence;
 label optional followups separately. Tailor this starting block to the user's
-next-session focus. Use the shortest useful account, normally at most 250 words,
-without a minimum or hard truncation. Later durable context starts at H2 to close
-Next action and never repeats Objective or Next action as a second summary.
+next-session focus. Keep it concise and include the details needed to resume.
+Later durable context starts at H2 to close Next action and never repeats
+Objective or Next action as a second summary.
 Keep still-relevant decisions, rationale, constraints, corrections, acceptance
 attribution and unfinished work in the complete cumulative note. Focus and brevity
 must not erase them. Summarize evidence and link detailed reports with immutable
@@ -93,10 +93,9 @@ Ordinary Save also compiles knowledge on a host whose discovered save schema
 advertises structured.compilation AND whose fresh session_context returns
 knowledge.available: true with schemaVersion: 1. These are capability checks;
 plugin version or model familiarity never proves support. On such a host, prepare
-all compilation before dispatching Save: one <=120-word overview of this cumulative
-note, up to two affected reusable topic documents, and one <=250-word recent-memory
-briefing. This is part of Save; there is no separate update-knowledge command or
-normal save-without-knowledge option. If compilation or source loading fails before
+all compilation before dispatching Save: one overview of this cumulative note,
+every affected reusable topic document, and one recent-memory briefing.
+Complete compilation as part of the same Save. If compilation or source loading fails before
 dispatch, retain the draft and report Save incomplete: no new note was published.
 On older hosts without this capability, preserve legacy Save, explicitly report
 compilation unavailable, and do not pretend a note-only receipt includes knowledge.
@@ -110,6 +109,16 @@ send unsupported assessment fields or claim assessed maintenance from legacy Sav
 Once assessment support is advertised, never downgrade to save-v1 to evade a
 failed or unresolved assessment. Conflicting capability reports require a fresh
 schema/context check; retain the draft while support remains uncertain.
+
+Read the service's capacities from fresh session_context.knowledge.limits. Honor
+both these capacities and the discovered Save schema. The expanded host advertises
+affectedTopics: 10, outputs: 12, topicSources: 64, assessmentSources: 768,
+consideredTopics: 128, overviewWords: 240 and briefingWords: 500. The briefing
+still uses the seven-or-fewer sources selected by the plan. A compilation host
+without the limits descriptor retains two affected topics and four compiled
+outputs, 32 references per topic, 72 references per assessment source list, 64
+considered topics and exclusions, and 120/250 overview/briefing words. Retain the
+draft and refresh discovery if the descriptor and the Save schema conflict.
 
 Use session_context.knowledge.plan: it selects at most seven current session notes
 by latest saved time then path. Replace repeated checkpoints with that session's
@@ -130,23 +139,23 @@ compact knowledge discovery, prior source dependencies and any newly relevant
 uncited information. Do not assume the recent briefing window is the complete
 affected scope. Read the necessary bounded source/page closure: the changed note,
 at most six other briefing notes, every affected complete topic page and its
-explicit evidence dependencies, at most 32 source references per topic. Load only
-needed additional originals, pinned to the same sourceCommit; summaries, search
-snippets and metadata do not prove semantic consideration. Preserve exact source
+explicit evidence dependencies. Load needed additional originals within the
+advertised source limits and pin each read to the same sourceCommit. Assess full
+sources for semantic evidence. Preserve exact source
 revision/hash provenance and distinguish an examined exclusion with its rationale
 from a source or topic never assessed. Missing dependencies or unknown selection
 must remain visibly incomplete, never a fabricated complete-coverage claim.
 
-Revise every affected generated section in the same atomic Save, including both
-topics when a correction affects two. Replace obsolete current claims and retain
-their prior rationale/history, attributed conflicts and unresolved questions.
+Revise every affected generated section in the same atomic Save. Replace obsolete
+current claims and retain their prior rationale/history, attributed conflicts and
+unresolved questions.
 Unchanged facts survive; unrelated authored/external sections stay verbatim.
 Reuse stable topic role/key and document IDs, not titles; a rename must not create
 a duplicate topic. Do not rewrite unrelated topic bodies to advance coverage.
-If a third affected topic, more than 32 references for a topic, missing evidence
-or another admitted limit prevents the complete required closure, stop BEFORE
-Save dispatch. Retain the complete cumulative note, proposed page changes and
-assessment draft; name the unresolved topics/dependencies and the precise limit.
+If required evidence is missing or the actual topic, source, or byte limit
+prevents complete closure, stop BEFORE Save dispatch. Retain the complete
+cumulative note, proposed page changes and assessment draft. Name the unresolved
+topics/dependencies and the precise limit.
 Report Save incomplete with prior publication intact and explain the next action:
 resolve missing evidence or request separately scoped broader maintenance. Never
 drop an affected page, publish a note-only success, create repeated Saves to bypass
@@ -166,8 +175,8 @@ Each document change includes compilation: {schemaVersion:1,role,key,
 compilerVersion:'wiki-save-v1',sources:[...],coverage:{omitted:0}} for the assessed
 writer; use compilerVersion: 'save-v1' only on the older compilation host described
 above. The briefing uses the plan's omitted count. The overview has exactly the
-prospective source. Topics cite every
-current note used, at most 32; keep scope bounded and state any known coverage gap.
+prospective source. Topics cite every current note used within the per-topic
+source limit. State any known coverage gap.
 The briefing cites exactly the plan's seven-or-fewer sources, including prospective
 only if selected. The service resolves prospective to the exact rendered note's
 revision and SHA-256. It computes each document's sourceFingerprint; never supply
@@ -184,14 +193,16 @@ compilerVersion:'wiki-save-v1',scope:{kind:'current-notes',sourceFingerprint,eli
 examinedSources:[...],changedSources:[...],consideredTopics:[...],affectedKeys:[...],
 exclusions:[...],unresolved:[]}.
 Copy scope from fresh knowledge.assessment.scope, never invent its fingerprint or
-eligible count. examinedSources and changedSources each contain at most 72 exact
-{conversationId,revisionId,contentHash} references or {prospective:true}; include
-the prospective note in both lists, only actually examined sources in examinedSources,
-and the complete changed-source set requiring assessment in changedSources.
-consideredTopics contains at most 64 exact {id,key,revisionId,contentHash} records
-for assessed existing topics. affectedKeys lists every affected topic's stable key,
-at most two; exclusions lists at most 64 {key,rationale} judgments for considered
-but unaffected topics. These are raw topic keys; structured.compilation.keys uses
+eligible count. For examinedSources and changedSources, apply assessmentSources to
+each list of exact {conversationId,revisionId,contentHash} references or
+{prospective:true}. Include the prospective note in both lists. List sources
+actually examined in examinedSources and the complete changed-source set requiring
+assessment in changedSources.
+consideredTopics contains exact {id,key,revisionId,contentHash} records for assessed
+existing topics. affectedKeys lists every affected topic's stable key within the
+affectedTopics limit. Apply the consideredTopics limit to both consideredTopics
+and exclusions, whose {key,rationale} judgments cover examined, unaffected topics.
+These are raw topic keys; structured.compilation.keys uses
 role:key (for example, topic:deployment). Bind every declared affected key to its
 intended topic output. Discover necessary pending sources and topic dependencies
 from the fresh bounded index and complete selected pages; reconcile any returned
@@ -286,8 +297,9 @@ sessions. These render as Inference, never as accepted fact or new instruction.
 Zero insights is valid and preferable to an invented connection. The overview and
 briefing word caps cover generated section prose plus insight text. Keep citations
 in section.sources ({reference,conversationId,span?}) and exact machine source refs
-in compilation.sources. All outputs must pass the existing byte/read ceilings;
-never truncate source notes, prune history or increase budgets to force a Save.
+in compilation.sources. Observe the discovered tool's write limits and the read
+limits on stored outputs. Use adequate supported Sync packet budgets to load and
+verify complete evidence. Never truncate source notes or prune history to fit.
 
 After dispatch, retain the original UUID and EXACT title/body/structured request.
 Any uncertain result uses save_receipt/save_read for that same operation. Verify
