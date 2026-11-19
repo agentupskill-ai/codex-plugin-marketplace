@@ -210,8 +210,23 @@ are preserved. A verified previous helper whose complete pinned payload matches
 the current release except signed release metadata and the runtime admission table
 retains the two local archive retirement commands, including while signed out or
 expired. These offline commands do not invoke runtime admission. Any other payload
-change holds retirement until exact renewal. New ownership recovery and migration
-still require renewal and their separate approvals.
+change holds retirement until exact renewal. In 0.8.19 the retained 8aa1 helper
+has such a payload difference: both automation-native-home-recovery-retire-preview
+and automation-native-home-recovery-retire are held, while other supported local
+controls remain available. Disclose this before plugin-upgrade approval. If archive
+retirement is needed, use the delivery skill for its exact preview and confirmation
+if 0.8.16 or 0.8.18 is actually installed; otherwise ask the setup operator to review compatible
+existing controls. The installer requires --acknowledge-retained-helper-retirement-hold
+before any native mutation affecting a retained 8aa1 reference, including retries.
+Use it only after the user specifically approves those two command holds; it does
+not override unknown/differing references or approve helper renewal. Current-helper
+and unreferenced computers need no extra acknowledgment. For a retained 8aa1
+reference, an already registered 0.8.19 native recopy repair also needs the flag;
+a verified no-op does not. If a review hold follows predecessor marketplace
+removal, preserve remaining bytes and use operator-supported reconciliation before
+retrying the exact installer; do not rely on a hidden skill or direct native bypass.
+New ownership recovery and migration still
+require renewal and their separate approvals.
 Never swap helpers or reuse old enrollment consent silently.
 
 8. After a successful migration, inspect status and finish automation-setup then
