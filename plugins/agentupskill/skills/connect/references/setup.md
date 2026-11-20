@@ -3,13 +3,14 @@
 Use the source, reviewed commit, version, account identifier and current code in
 the user's prepared request. Retrieve files from that exact commit read-only
 before changing installation or configuration: the marketplace, plugin manifest,
-MCP manifest, setup/connect/delivery skills and references, package.json, install.mjs,
-and the delivery script with its pinned release inventory. Stop if
+MCP manifest, setup/connect/delivery/save/sync skills and references, package.json,
+install.mjs, the legacy delivery script with its pinned release inventory, and the
+Sync skills script with its vendored module. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin up v0.8.20,
+marketplace is agentupskill-setup, plugin up v0.8.22,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
-There must be no plugin hooks, credential fields or account data. The installer and optional delivery bootstrap are the only executables; the npm
+There must be no plugin hooks, credential fields or account data. The installer, the legacy delivery bootstrap and the Sync skills script are the only executables; the npm
 package has no dependencies or lifecycle scripts. Read each before running it. Inspect supported Codex commands and existing
 configuration without exposing credentials. Stop on conflicting source, commit,
 version or connection. Preserve other marketplaces, plugins and credentials.
@@ -17,7 +18,7 @@ version or connection. Preserve other marketplaces, plugins and credentials.
 The installer supports macOS with POSIX file-ownership checks. Other platforms
 require a separately reviewed installer; do not bypass the platform check.
 
-Before asking approval to upgrade to 0.8.20, inspect enrollment and the retained
+Before asking approval to upgrade to 0.8.22, inspect enrollment and the retained
 helper locator as data only. If they identify retained helper 10096e84 or 7f8772a7, explain
 that both automation-native-home-recovery-retire-preview and
 automation-native-home-recovery-retire will be held after upgrading because its
@@ -30,7 +31,10 @@ enrollment, recovery or changed/unknown references. Do not bypass this hold with
 direct native commands. If archive retirement is needed, stop before upgrading:
 ask the setup operator to verify the archive-retirement controls for this exact
 helper. Current-helper and unreferenced computers need no such flag.
-The same flag is required if an already registered 0.8.20 installation with that
+An upgrade from 0.8.20 changes nothing for a retained helper: 0.8.20 already
+holds those two commands with the same delivery release, so do not ask for this
+acknowledgment or pass the flag; the installer reports that they stay held.
+The same flag is required if an already registered 0.8.22 installation with that
 retained helper reference to either pin needs a native recopy repair. The installer cannot infer
 an earlier capability-loss approval. A fully verified matching installation is a
 no-op and needs no flag. If reference review holds after this invocation removed
@@ -77,7 +81,7 @@ ref, existing authentication, permissions and local delivery records. Do not mak
 the customer run Terminal commands or download a ZIP. An existing agentupskill@agentupskill-setup installation needs a reviewed native
 rename migration before installing up@agentupskill-setup. Stop instead of adding a
 second copy of its connector. Preserve the installed plugin and credentials.
-For an enabled up 0.6.0, 0.7.0, 0.8.0, 0.8.1, 0.8.2, 0.8.3, 0.8.4, 0.8.5, 0.8.6, 0.8.7, 0.8.8, 0.8.9, 0.8.10, 0.8.11, 0.8.12, 0.8.13, 0.8.14, 0.8.15, 0.8.16, 0.8.18 or 0.8.19 installation, inspect its exact predecessor commit
+For an enabled up 0.6.0, 0.7.0, 0.8.0, 0.8.1, 0.8.2, 0.8.3, 0.8.4, 0.8.5, 0.8.6, 0.8.7, 0.8.8, 0.8.9, 0.8.10, 0.8.11, 0.8.12, 0.8.13, 0.8.14, 0.8.15, 0.8.16, 0.8.18, 0.8.19 or 0.8.20 installation, inspect its exact predecessor commit
 and metadata too. Explicitly include the native pinned-marketplace retarget and
 plugin update in the approval. Before that approval, inspect the enrollment and
 retained helper pin as data only. If it will become the previous pin, explain
@@ -112,8 +116,8 @@ existing full setup grant. Never use unscoped automatic login.
 Stop if browser consent requests Memory lifecycle, permission management or access
 beyond the six named scopes. Let the user select the setup-page email and Individual, and approve
 consent themselves. Do not collect credentials or approve on their behalf.
-Return to the connect skill for actual verification, then offer optional delivery
-using the packaged delivery skill in this same chat. Installation, a launch click
+Return to the connect skill for actual verification. Do not offer helper delivery:
+selected skills arrive when the user runs Sync. Installation, a launch click
 and authentication alone never prove connection. Do not save/import memory.
 
 On a failed step, report the actual failure and stop; retain completed steps.
