@@ -10,10 +10,14 @@ import {isDeepStrictEqual} from 'node:util';
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
 const pluginId='up@'+name;
-export const version='0.8.20';
+export const version='0.8.22';
 const retirementHoldFlag='--acknowledge-retained-helper-retirement-hold';
 const retirementHoldNotice=pin=>`The retained ${pin.slice(0,8)} helper will lose automation-native-home-recovery-retire-preview and automation-native-home-recovery-retire after this ${version} plugin upgrade because its payload differs from the current signed helper. Other supported local controls remain available. If archive retirement is needed, stop before upgrading and ask your setup operator to verify the archive-retirement controls for this exact helper. Acknowledgment covers only these two retirement holds, not helper renewal, enrollment, recovery or changed state.`;
-const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7','0.8.8','0.8.9','0.8.10','0.8.11','0.8.12','0.8.13','0.8.14','0.8.15','0.8.16','0.8.18','0.8.19'];
+// Predecessors whose delivery release is identical to this one: their retained
+// helpers already hold the two retirement commands, so upgrading changes nothing.
+const retirementHeldBy=['0.8.20'];
+const retirementUnchangedNotice=(pin,from)=>`The retained ${pin.slice(0,8)} helper already holds automation-native-home-recovery-retire-preview and automation-native-home-recovery-retire under ${from}; they stay held after this ${version} plugin upgrade, so no acknowledgment is needed. Other supported local controls remain available.`;
+const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7','0.8.8','0.8.9','0.8.10','0.8.11','0.8.12','0.8.13','0.8.14','0.8.15','0.8.16','0.8.18','0.8.19','0.8.20'];
 export const expected={
   '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'up',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
   'plugins/agentupskill/.codex-plugin/plugin.json':{name:'up',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json',extensions:{'com.openai':{onboardingSkill:'./skills/setup/SKILL.md'}}},
@@ -208,6 +212,8 @@ export async function install(ref,{upgradeFrom,acknowledgeRetainedHelperRetireme
   await publicMetadata(ref);
   const prior=upgradeFrom?await publicMetadata(upgradeFrom,true):null;
   const delivery=preserveDeliveryControls()??{}, {enrolled,previousPin,retainedPin}=delivery;
+  const priorVersion=prior?.['plugins/agentupskill/.codex-plugin/plugin.json'].version;
+  const retirementUnchanged=previousPin&&retirementHeldBy.includes(priorVersion);
   let predecessorRemoved=false,targetRegistered=false,retirementNoticePrinted=false;const marketplaceRoots=[];
   const reviewHold=message=>{
     const partial=predecessorRemoved||targetRegistered?(predecessorRemoved?' This invocation removed the predecessor marketplace. ':(upgradeFrom?' This retry':' This invocation')+' started without a registered marketplace; it did not remove the predecessor marketplace. ')+(targetRegistered?'It registered the reviewed target marketplace, but the plugin update has not run.':'The target marketplace has not been registered and the plugin update has not run.')+' Preserve the remaining cached plugin/helper bytes, delivery references, recovery evidence and credentials in place. The installer will not reset or delete them. Do not rely on a delivery skill hidden by the missing marketplace or use direct native registration commands to bypass this hold. Ask the setup operator to reconcile the references through reviewed compatible controls. After that review, retry this installer with --ref '+ref+(upgradeFrom?' --upgrade-from '+upgradeFrom:'')+'; include '+retirementHoldFlag+' only if its specific capability loss is required and approved. Unknown, dropped or inconsistent references must be resolved through supported reconciliation, not overridden.':'';
@@ -216,8 +222,8 @@ export async function install(ref,{upgradeFrom,acknowledgeRetainedHelperRetireme
   const mutate=args=>{
     let fresh;try{fresh=preserveDeliveryControls(marketplaceRoots)??{};}catch(error){throw reviewHold(predecessorRemoved||targetRegistered?'Delivery references could not be validated before the next native mutation; acknowledgment does not override this hold.':error.message);}
     if(!isDeepStrictEqual(fresh,delivery))throw reviewHold('Delivery references changed before native mutation. Preserve the current state and review a fresh upgrade; acknowledgment does not override changed state.');
-    if(previousPin&&!acknowledgeRetainedHelperRetirementHold)throw reviewHold(retirementHoldNotice(retainedPin)+' Review this capability loss and explicitly acknowledge it with '+retirementHoldFlag+' before retrying. No native mutation was attempted by this invocation.');
-    if(previousPin&&!retirementNoticePrinted){console.error('The enrolled delivery helper uses a previous pin. Account delivery and rollback require renewal with a new preview and consent before a helper update. '+retirementHoldNotice(retainedPin)+' This plugin upgrade preserves enrollment and credentials.');retirementNoticePrinted=true;}
+    if(previousPin&&!retirementUnchanged&&!acknowledgeRetainedHelperRetirementHold)throw reviewHold(retirementHoldNotice(retainedPin)+' Review this capability loss and explicitly acknowledge it with '+retirementHoldFlag+' before retrying. No native mutation was attempted by this invocation.');
+    if(previousPin&&!retirementNoticePrinted){console.error('The enrolled delivery helper uses a previous pin. Account delivery and rollback require renewal with a new preview and consent before a helper update. '+(retirementUnchanged?retirementUnchangedNotice(retainedPin,priorVersion):retirementHoldNotice(retainedPin))+' This plugin upgrade preserves enrollment and credentials.');retirementNoticePrinted=true;}
     return command('codex',args);
   };
   const restoration='If its registration is absent or interrupted, preserve the current state and retry this reviewed installer after any required capability-loss acknowledgment and reference review. Do not use direct native registration commands; ask the setup operator for reviewed compatible reconciliation if the guarded installer cannot proceed.';
@@ -249,7 +255,6 @@ export async function install(ref,{upgradeFrom,acknowledgeRetainedHelperRetireme
   try{current=installed({allowOlder:Boolean(prior)});}
   catch(error){throw new Error(error.message+' '+recovery);}
   if(current&&!existing&&!prior)throw new Error('An existing plugin has no verified marketplace. Nothing was replaced. '+recovery);
-  const priorVersion=prior?.['plugins/agentupskill/.codex-plugin/plugin.json'].version;
   if(current&&current.version!==version&&current.version!==priorVersion)throw new Error('Installed version does not match the reviewed predecessor. Nothing was replaced.');
   if(current&&predecessor)installedCache(current,existing.root);
   if(enrolled&&!previousPin&&prior&&(predecessor||!existing||current?.version!==version))console.error('This plugin upgrade preserves delivery enrollment and credentials. Delivery controls remain bound to their enrolled helper pin; inspect delivery after upgrading before using controls from the new plugin.');

@@ -1,7 +1,12 @@
 ---
 name: delivery
-description: Set up or inspect automatic Agent Upskill Shared Skills delivery on this Mac, and guide pause, resume, removal or recovery.
+description: Legacy. Inspect, pause, resume, remove, recover or retire an existing automatic Agent Upskill Shared Skills delivery helper on this Mac. New computers get selected skills through Sync.
 ---
+
+Legacy: new computers receive selected Shared Skills when the user runs Sync. Do
+not offer or start automatic delivery or enrollment on a computer with no existing
+helper. Keep every local control below for existing helpers, including helper
+retirement.
 
 Use this plugin's [delivery bootstrap](scripts/delivery.mjs) and
 [pinned release inventory](scripts/delivery-release.json). Read both before use.
@@ -14,7 +19,7 @@ MCP access or helper login for signed-out/offline cleanup. Resume and rollback
 retain their current authority checks. A missing/changed helper remains a repair
 hold; do not download a replacement as an incidental local-control action.
 
-1. Offer automatic delivery on this computer. Explain: the pinned signed component
+1. Legacy, for an existing helper only (renewal or repair): offer automatic delivery on this computer. Explain: the pinned signed component
    supports Codex's existing sign-in. After the approved prepare/inspect step
    returns verified-helper, require codex_open_app_supported=true for that mode.
    A not-installed result goes to the approved prepare step before deciding support.
@@ -210,7 +215,7 @@ are preserved. A verified previous helper whose complete pinned payload matches
 the current release except signed release metadata and the runtime admission table
 retains the two local archive retirement commands, including while signed out or
 expired. These offline commands do not invoke runtime admission. Any other payload
-change holds retirement until exact renewal. In 0.8.20 both retained helpers, 10096e84 and 7f8772a7,
+change holds retirement until exact renewal. In 0.8.22 both retained helpers, 10096e84 and 7f8772a7,
 have such a payload difference: both automation-native-home-recovery-retire-preview
 and automation-native-home-recovery-retire are held, while other supported local
 controls remain available. Disclose this before plugin-upgrade approval. If archive
@@ -219,8 +224,9 @@ helper before upgrading. The installer requires --acknowledge-retained-helper-re
 before any native mutation affecting either retained helper reference, including retries.
 Use it only after the user specifically approves those two command holds; it does
 not override unknown/differing references or approve helper renewal. Current-helper
-and unreferenced computers need no extra acknowledgment. For either retained helper
-reference, an already registered 0.8.20 native recopy repair also needs the flag;
+and unreferenced computers need no extra acknowledgment. An upgrade from 0.8.20
+needs none either: 0.8.20 already holds those two commands with this same release.
+For either retained helper reference, an already registered 0.8.22 native recopy repair also needs the flag;
 a verified no-op does not. If a review hold follows predecessor marketplace
 removal, preserve remaining bytes and use operator-supported reconciliation before
 retrying the exact installer; do not rely on a hidden skill or direct native bypass.

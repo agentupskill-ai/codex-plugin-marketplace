@@ -30,7 +30,6 @@ tool fails or is unavailable, report the result and direct the user back to thei
 Agent Upskill setup page to check the connection or restart an expired attempt.
 Do not substitute an identity call, simulate success, alter account permissions,
 or save/import memory as part of this connection check.
-After connected: true, offer optional automatic skill delivery for this computer
-using [the delivery skill](../delivery/SKILL.md) in this same chat. A decline leaves
-the completed connection intact. Do not prepare a helper or enroll without its
-separate approval and exact local preview confirmation.
+After connected: true, explain that selected Shared Skills arrive on this
+computer when the user runs Sync, after their approval. Do not offer helper
+delivery or enrollment; the legacy delivery skill only manages an existing helper.
