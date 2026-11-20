@@ -6,7 +6,7 @@ before changing installation or configuration: the marketplace, plugin manifest,
 MCP manifest, setup/connect/delivery skills and references, package.json, install.mjs,
 and the delivery script with its pinned release inventory. Stop if
 retrieval fails. Never register a marketplace just to inspect it. Verify the
-marketplace is agentupskill-setup, plugin up v0.8.19,
+marketplace is agentupskill-setup, plugin up v0.8.20,
 and one HTTP connector agentupskill-bundled-connect at
 https://app.agentupskill.ai/mcp, authentication ON_USE.
 There must be no plugin hooks, credential fields or account data. The installer and optional delivery bootstrap are the only executables; the npm
@@ -17,8 +17,8 @@ version or connection. Preserve other marketplaces, plugins and credentials.
 The installer supports macOS with POSIX file-ownership checks. Other platforms
 require a separately reviewed installer; do not bypass the platform check.
 
-Before asking approval to upgrade to 0.8.19, inspect enrollment and the retained
-helper locator as data only. If they identify the retained 8aa1 helper, explain
+Before asking approval to upgrade to 0.8.20, inspect enrollment and the retained
+helper locator as data only. If they identify retained helper 10096e84 or 7f8772a7, explain
 that both automation-native-home-recovery-retire-preview and
 automation-native-home-recovery-retire will be held after upgrading because its
 payload differs from the current signed helper. Other supported local controls
@@ -28,11 +28,10 @@ user explicitly acknowledges losing those two commands; include
 approval, including on an interrupted retry. It does not approve helper renewal,
 enrollment, recovery or changed/unknown references. Do not bypass this hold with
 direct native commands. If archive retirement is needed, stop before upgrading:
-if 0.8.16 or 0.8.18 is actually installed, use its delivery skill for the exact
-preview and confirmation; otherwise ask the setup operator to review compatible
-existing controls. Current-helper and unreferenced computers need no such flag.
-The same flag is required if an already registered 0.8.19 installation with that
-retained 8aa1 reference needs a native recopy repair. The installer cannot infer
+ask the setup operator to verify the archive-retirement controls for this exact
+helper. Current-helper and unreferenced computers need no such flag.
+The same flag is required if an already registered 0.8.20 installation with that
+retained helper reference to either pin needs a native recopy repair. The installer cannot infer
 an earlier capability-loss approval. A fully verified matching installation is a
 no-op and needs no flag. If reference review holds after this invocation removed
 the predecessor marketplace, preserve its remaining bytes and records, report
@@ -53,7 +52,7 @@ npx --yes --ignore-scripts --package=<source>/archive/<reviewed commit>.tar.gz a
 Replace the placeholders only with the reviewed source and commit. The wrapper
 checks metadata and preserves completed steps using native Codex commands. Before any native mutation,
 the installer reads this home's enrollment and retained helper reference as data.
-If either identifies a helper outside the current and one previous accepted pins,
+If either identifies a helper outside the three exact accepted pins,
 it holds the upgrade. Keep the installed plugin for local status/pause and exact
 removal, migration recovery and helper-reference retirement before retrying.
 If the installed plugin has no delivery skill, or no plugin is installed, stop
@@ -78,7 +77,7 @@ ref, existing authentication, permissions and local delivery records. Do not mak
 the customer run Terminal commands or download a ZIP. An existing agentupskill@agentupskill-setup installation needs a reviewed native
 rename migration before installing up@agentupskill-setup. Stop instead of adding a
 second copy of its connector. Preserve the installed plugin and credentials.
-For an enabled up 0.6.0, 0.7.0, 0.8.0, 0.8.1, 0.8.2, 0.8.3, 0.8.4, 0.8.5, 0.8.6, 0.8.7, 0.8.8, 0.8.9, 0.8.10, 0.8.11, 0.8.12, 0.8.13, 0.8.14, 0.8.15 or 0.8.16 installation, inspect its exact predecessor commit
+For an enabled up 0.6.0, 0.7.0, 0.8.0, 0.8.1, 0.8.2, 0.8.3, 0.8.4, 0.8.5, 0.8.6, 0.8.7, 0.8.8, 0.8.9, 0.8.10, 0.8.11, 0.8.12, 0.8.13, 0.8.14, 0.8.15, 0.8.16, 0.8.18 or 0.8.19 installation, inspect its exact predecessor commit
 and metadata too. Explicitly include the native pinned-marketplace retarget and
 plugin update in the approval. Before that approval, inspect the enrollment and
 retained helper pin as data only. If it will become the previous pin, explain
