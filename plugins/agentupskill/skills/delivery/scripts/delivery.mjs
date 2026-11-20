@@ -121,7 +121,7 @@ function supported(){
 }
 export async function inspectDelivery({home,storage=defaultStorage(),trust=trustedDirectory,verifyPackage=verifyPinnedHelper,platformCheck=supported,allowExpired=false,now=Date.now(),acceptedPins=pins}={}){
   platformCheck();let root=targetFor(storage);
-  check(acceptedPins.length>=1&&acceptedPins.length<=2&&new Set(acceptedPins.map(p=>p.helper_sha256)).size===acceptedPins.length,'Review at most the current and one previous immutable helper pin');
+  check(acceptedPins.length>=1&&acceptedPins.length<=3&&new Set(acceptedPins.map(p=>p.helper_sha256)).size===acceptedPins.length,'Review at most the current and two previous immutable helper pins');
   const select=hash=>{const pin=acceptedPins.find(p=>p.helper_sha256===hash);check(pin,'Unknown helper pin; preserve it for review');return pin;};
   const describe=(root,result,pin)=>({state:'verified-helper',helper_root:root,helper_sha256:result.helper_sha256,keychain_sha256:result.keychain_sha256??pin.keychain_sha256,trust_expired:result.trust_expired??false,helper_expires_at:result.helper_expires_at,root_expires_at:result.root_expires_at,renewal_deadline:result.renewal_deadline,previous_helper:pin.helper_sha256!==acceptedPins[0].helper_sha256,codex_open_app_supported:['lib/codex-connection.mjs','lib/codex-managed-session.mjs'].every(name=>pin.files.some(file=>file.path===name)),availability:'not-checked'});
   // A customer may already have enrolled the released standalone helper. Treat
@@ -218,12 +218,37 @@ export async function retireHelper({home,storage=defaultStorage(),confirmation,t
   const info=await inspect({home,storage,allowExpired:true,trust});
   check(info.state==='verified-helper','Repair the exact missing helper first; do not discard unresolved recovery evidence');
   const {assertFilesystemMigrationsSettled}=await import(pathToFileURL(path.join(info.helper_root,'lib/filesystem-migration.mjs')).href);
-  const {verifyDetachedAutomationRemoval}=await import(pathToFileURL(path.join(info.helper_root,'lib/automation-removal.mjs')).href);
+  const {verifyDetachedAutomationRemoval,historicalAutomationRemoval}=await import(pathToFileURL(path.join(info.helper_root,'lib/automation-removal.mjs')).href);
   const archives=fs.readdirSync(home).filter(n=>n.startsWith('shared-skills-automation-detached-')).sort();
   check(archives.length<=32,'Detached recovery evidence needs inspection');
-  for(const name of archives)verifyDetachedAutomationRemoval(home,path.join(home,name));
+  const stat=fs.statSync(home),historicalArchives=[];
+  for(const name of archives){
+    const archive=path.join(home,name);
+    try{verifyDetachedAutomationRemoval(home,archive);}
+    catch(error){
+      if(error.message!=='Detached enrollment/removal owner changed')throw error;
+      const {digest:contractDigest,encode}=await import(pathToFileURL(path.join(info.helper_root,'lib/contracts.mjs')).href);
+      const run=path.join(archive,'run'),enrollmentFile=path.join(archive,'enrollment.json');
+      privateDirectory(archive,trust);privateDirectory(run,trust);
+      const enrollment=privateJSON(enrollmentFile,1024*1024);
+      const {preview:removal}=privateJSON(path.join(run,'enrollment-removal.json'),1024*1024);
+      const identity=enrollment.preview?.home_identity,account=enrollment.preview?.specification?.account;
+      // Retiring a locator cannot adopt, edit or recover another helper's historical enrollment.
+      check(enrollment.kind==='SharedSkillsAutomationEnrollment'&&enrollment.schema_version===1&&
+        enrollment.enrollment_id===removal?.enrollment_id&&account?.codex_profile===home&&
+        name===`shared-skills-automation-detached-${enrollment.enrollment_id}`&&removal.archive===archive&&removal.codex_home===home&&
+        /^[a-f0-9]{64}$/.test(enrollment.preview?.helper_sha256??'')&&enrollment.preview.helper_sha256!==reference.helper_sha256&&
+        Number.isSafeInteger(identity?.device)&&identity.device>=0&&identity.device!==stat.dev&&
+        contractDigest(identity)===contractDigest({device:identity.device,inode:stat.ino,uid:stat.uid})&&
+        fs.readFileSync(enrollmentFile).equals(encode(enrollment))&&contractDigest(enrollment)===removal.enrollment_sha256&&
+        contractDigest(account)===removal.account_sha256&&enrollment.ownership?.account_sha256===removal.account_sha256,
+      error.message);
+      check(historicalAutomationRemoval(home,removal.confirmation_sha256)?.archive===archive,error.message);
+      historicalArchives.push({archive,previous_device:identity.device,removal_sha256:removal.confirmation_sha256});
+    }
+  }
   assertFilesystemMigrationsSettled(home);
-  const stat=fs.statSync(home),preview={action:'retire-helper-reference',codex_home:home,home_identity:{device:stat.dev,inode:stat.ino,uid:stat.uid},reference_file:file,reference,reference_sha256:sha(fs.readFileSync(file)),detached_archives:archives,notice:'Retire only the helper locator. Preserve helper files, all detached evidence, skills and credentials. New setup requires separate approval.'};
+  const preview={action:'retire-helper-reference',codex_home:home,home_identity:{device:stat.dev,inode:stat.ino,uid:stat.uid},reference_file:file,reference,reference_sha256:sha(fs.readFileSync(file)),detached_archives:archives,...(historicalArchives.length?{historical_device_archives:historicalArchives}:{}),notice:'Retire only the helper locator. Preserve helper files, all detached evidence, skills and credentials. New setup requires separate approval.'};
   const digest=sha(Buffer.from(JSON.stringify(preview)));
   if(confirmation===undefined)return {preview,confirmation_sha256:digest};
   check(confirmation===digest&&!exists(path.join(home,'shared-skills-automation'))&&sha(fs.readFileSync(file))===preview.reference_sha256,'Confirm the fresh exact helper-reference retirement preview');

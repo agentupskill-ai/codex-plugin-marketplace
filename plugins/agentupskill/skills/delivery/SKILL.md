@@ -210,18 +210,17 @@ are preserved. A verified previous helper whose complete pinned payload matches
 the current release except signed release metadata and the runtime admission table
 retains the two local archive retirement commands, including while signed out or
 expired. These offline commands do not invoke runtime admission. Any other payload
-change holds retirement until exact renewal. In 0.8.19 the retained 8aa1 helper
-has such a payload difference: both automation-native-home-recovery-retire-preview
+change holds retirement until exact renewal. In 0.8.20 both retained helpers, 10096e84 and 7f8772a7,
+have such a payload difference: both automation-native-home-recovery-retire-preview
 and automation-native-home-recovery-retire are held, while other supported local
 controls remain available. Disclose this before plugin-upgrade approval. If archive
-retirement is needed, use the delivery skill for its exact preview and confirmation
-if 0.8.16 or 0.8.18 is actually installed; otherwise ask the setup operator to review compatible
-existing controls. The installer requires --acknowledge-retained-helper-retirement-hold
-before any native mutation affecting a retained 8aa1 reference, including retries.
+retirement is needed, ask the setup operator to verify the controls for this exact
+helper before upgrading. The installer requires --acknowledge-retained-helper-retirement-hold
+before any native mutation affecting either retained helper reference, including retries.
 Use it only after the user specifically approves those two command holds; it does
 not override unknown/differing references or approve helper renewal. Current-helper
-and unreferenced computers need no extra acknowledgment. For a retained 8aa1
-reference, an already registered 0.8.19 native recopy repair also needs the flag;
+and unreferenced computers need no extra acknowledgment. For either retained helper
+reference, an already registered 0.8.20 native recopy repair also needs the flag;
 a verified no-op does not. If a review hold follows predecessor marketplace
 removal, preserve remaining bytes and use operator-supported reconciliation before
 retrying the exact installer; do not rely on a hidden skill or direct native bypass.
@@ -266,8 +265,8 @@ automation-migration-abandon-preview/automation-migration-abandon exact archive,
 operation and confirmation gates. Retain uncertain evidence.
 Never unlock a live/ambiguous owner or silently resume after rollback/removal.
 
-For renewal, a plugin may retain at most one previous exact helper pin with its
-complete independent inventory; unknown pins are holds. A known previous helper
+For renewal, this plugin retains two previous exact helper pins with their
+complete independent inventories; unknown pins are holds. A known previous helper
 supports local controls and migration recovery only, never native-home recovery, new enrollment, remote operations or
 rollback. First detach its enrollment through the exact removal flow, settling all
 owned migration recovery. Run retire-helper-preview --codex-home <home>, show its
@@ -275,7 +274,11 @@ complete preview/digest and obtain explicit exact confirmation before
 retire-helper --codex-home <home> --confirmation-sha256 <digest>. It checks that
 enrollment is absent, detached removal ownership and migration settlement still
 hold, then archives only the locator; helper files, receipts, skills and credentials
-stay intact. Separately approve current prepare/login/enrollment as needed.
+stay intact. A detached archive from another helper may retain the same home path,
+owner and inode with a previous storage device number. The preview identifies
+those archives after verifying their original removal records. Their files and
+identities stay intact. This confirmation only retires the locator.
+Separately approve current prepare/login/enrollment as needed.
 If a retained helper is missing, inspect reports its exact root/pin. Obtain
 explicit download/repair approval for that original protected path, then run
 repair --codex-home <home>. It restores only the same reviewed archive to a missing

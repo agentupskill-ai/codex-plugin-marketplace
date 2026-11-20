@@ -10,10 +10,10 @@ import {isDeepStrictEqual} from 'node:util';
 const source='https://github.com/agentupskill-ai/codex-plugin-marketplace';
 const name='agentupskill-setup';
 const pluginId='up@'+name;
-export const version='0.8.19';
+export const version='0.8.20';
 const retirementHoldFlag='--acknowledge-retained-helper-retirement-hold';
-const retirementHoldNotice=`The retained 8aa1 helper will lose automation-native-home-recovery-retire-preview and automation-native-home-recovery-retire after this ${version} plugin upgrade because its payload differs from the current signed helper. Other supported local controls remain available. If archive retirement is needed, stop before upgrading: if 0.8.16 or 0.8.18 is actually installed, use its delivery skill for the exact preview and confirmation; otherwise ask your setup operator to review compatible existing controls. Acknowledgment covers only these two retirement holds, not helper renewal, enrollment, recovery or changed state.`;
-const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7','0.8.8','0.8.9','0.8.10','0.8.11','0.8.12','0.8.13','0.8.14','0.8.15','0.8.16','0.8.18'];
+const retirementHoldNotice=pin=>`The retained ${pin.slice(0,8)} helper will lose automation-native-home-recovery-retire-preview and automation-native-home-recovery-retire after this ${version} plugin upgrade because its payload differs from the current signed helper. Other supported local controls remain available. If archive retirement is needed, stop before upgrading and ask your setup operator to verify the archive-retirement controls for this exact helper. Acknowledgment covers only these two retirement holds, not helper renewal, enrollment, recovery or changed state.`;
+const predecessorVersions=['0.6.0','0.7.0','0.8.0','0.8.1','0.8.2','0.8.3','0.8.4','0.8.5','0.8.6','0.8.7','0.8.8','0.8.9','0.8.10','0.8.11','0.8.12','0.8.13','0.8.14','0.8.15','0.8.16','0.8.18','0.8.19'];
 export const expected={
   '.agents/plugins/marketplace.json':{name,interface:{displayName:'Agent Upskill Setup'},plugins:[{name:'up',source:{source:'local',path:'./plugins/agentupskill'},policy:{installation:'AVAILABLE',authentication:'ON_USE'},category:'Productivity'}]},
   'plugins/agentupskill/.codex-plugin/plugin.json':{name:'up',version,description:'Connect Agent Upskill and carry useful context between Codex conversations.',skills:'./skills/',mcpServers:'./.mcp.json',extensions:{'com.openai':{onboardingSkill:'./skills/setup/SKILL.md'}}},
@@ -22,7 +22,7 @@ export const expected={
 
 // Keep in sync with delivery-release.json; the archive contains no executable
 // helper import here. A dropped pin must retain its old controls before upgrade.
-const acceptedHelperPins=['7f8772a746ab5c1488736160fd2dc1afbfb71bc75b4458005f7f4d998bfde2ea','8aa1ef4191dd051a0e5e320d397a7d784ae5aef0b79347ef1b4febedf324691d'];
+const acceptedHelperPins=['8e10ae982ee629720d048793bf2660d4ec28e96b94fbd92a8faa219f1e551318','10096e84c9282973a1186b733b40a55e56a003837bcb77ab19a9d15a9b9e11fc','7f8772a746ab5c1488736160fd2dc1afbfb71bc75b4458005f7f4d998bfde2ea'];
 const denyACL=/^\s*\d+:\s+(?:(?:user|group):\S+|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})\s+(?:inherited\s+)?deny\s+[a-z][a-z_,]*(?:\s+inherited)?\s*$/;
 function helperLocation(root,forbiddenRoots=[]){
   if(typeof root!=='string'||!isAbsolute(root)||normalize(root)!==root||root.length>4096||/[\u0000-\u001f\u007f]/.test(root)||/\/(?:plugins\/cache|\.tmp)(?:\/|$)/i.test(root))throw new Error('Invalid durable helper location');
@@ -66,7 +66,7 @@ function preserveDeliveryControls(forbiddenRoots=[]){
     enrolled=true;previousPin||=pin!==acceptedHelperPins[0];
   }
   if(enrolled)try{protectedHelperLocation(retainedRoot);}catch{throw new Error('Delivery state needs review before this plugin upgrade. Its stored helper location is not a protected canonical directory or an exact missing-helper repair location. Preserve both records and all bytes; ask the setup operator for reviewed compatible repair or reconciliation.');}
-  return enrolled?{enrolled,previousPin,identity,references}:undefined;
+  return enrolled?{enrolled,previousPin,retainedPin,identity,references}:undefined;
 }
 
 function command(binary,args) {
@@ -207,7 +207,7 @@ export async function install(ref,{upgradeFrom,acknowledgeRetainedHelperRetireme
   if(typeof acknowledgeRetainedHelperRetirementHold!=='boolean')throw new Error('Use '+retirementHoldFlag+' only as an explicit acknowledgment.');
   await publicMetadata(ref);
   const prior=upgradeFrom?await publicMetadata(upgradeFrom,true):null;
-  const delivery=preserveDeliveryControls()??{}, {enrolled,previousPin}=delivery;
+  const delivery=preserveDeliveryControls()??{}, {enrolled,previousPin,retainedPin}=delivery;
   let predecessorRemoved=false,targetRegistered=false,retirementNoticePrinted=false;const marketplaceRoots=[];
   const reviewHold=message=>{
     const partial=predecessorRemoved||targetRegistered?(predecessorRemoved?' This invocation removed the predecessor marketplace. ':(upgradeFrom?' This retry':' This invocation')+' started without a registered marketplace; it did not remove the predecessor marketplace. ')+(targetRegistered?'It registered the reviewed target marketplace, but the plugin update has not run.':'The target marketplace has not been registered and the plugin update has not run.')+' Preserve the remaining cached plugin/helper bytes, delivery references, recovery evidence and credentials in place. The installer will not reset or delete them. Do not rely on a delivery skill hidden by the missing marketplace or use direct native registration commands to bypass this hold. Ask the setup operator to reconcile the references through reviewed compatible controls. After that review, retry this installer with --ref '+ref+(upgradeFrom?' --upgrade-from '+upgradeFrom:'')+'; include '+retirementHoldFlag+' only if its specific capability loss is required and approved. Unknown, dropped or inconsistent references must be resolved through supported reconciliation, not overridden.':'';
@@ -216,8 +216,8 @@ export async function install(ref,{upgradeFrom,acknowledgeRetainedHelperRetireme
   const mutate=args=>{
     let fresh;try{fresh=preserveDeliveryControls(marketplaceRoots)??{};}catch(error){throw reviewHold(predecessorRemoved||targetRegistered?'Delivery references could not be validated before the next native mutation; acknowledgment does not override this hold.':error.message);}
     if(!isDeepStrictEqual(fresh,delivery))throw reviewHold('Delivery references changed before native mutation. Preserve the current state and review a fresh upgrade; acknowledgment does not override changed state.');
-    if(previousPin&&!acknowledgeRetainedHelperRetirementHold)throw reviewHold(retirementHoldNotice+' Review this capability loss and explicitly acknowledge it with '+retirementHoldFlag+' before retrying. No native mutation was attempted by this invocation.');
-    if(previousPin&&!retirementNoticePrinted){console.error('The enrolled delivery helper uses a previous pin. Account delivery and rollback require renewal with a new preview and consent before a helper update. '+retirementHoldNotice+' This plugin upgrade preserves enrollment and credentials.');retirementNoticePrinted=true;}
+    if(previousPin&&!acknowledgeRetainedHelperRetirementHold)throw reviewHold(retirementHoldNotice(retainedPin)+' Review this capability loss and explicitly acknowledge it with '+retirementHoldFlag+' before retrying. No native mutation was attempted by this invocation.');
+    if(previousPin&&!retirementNoticePrinted){console.error('The enrolled delivery helper uses a previous pin. Account delivery and rollback require renewal with a new preview and consent before a helper update. '+retirementHoldNotice(retainedPin)+' This plugin upgrade preserves enrollment and credentials.');retirementNoticePrinted=true;}
     return command('codex',args);
   };
   const restoration='If its registration is absent or interrupted, preserve the current state and retry this reviewed installer after any required capability-loss acknowledgment and reference review. Do not use direct native registration commands; ask the setup operator for reviewed compatible reconciliation if the guarded installer cannot proceed.';
