@@ -31,16 +31,21 @@ jobs:
 
           # The operator matches this receipt to the independent host export at review.
           receipt = b'.github/reviewed-export.sha256'
-          tooling = {receipt, b'.github/workflows/verify-export.yml'}
           files = {}
           tree = check_output(['git', 'ls-tree', '-rz', 'HEAD'])
           for entry in tree.split(b'\0')[:-1]:
               header, path = entry.split(b'\t', 1)
               mode, kind, oid = header.split()
               if mode not in (b'100644', b'100755') or kind != b'blob':
-                  raise SystemExit('Unexpected non-regular file in the export tree')
-              if path not in tooling:
+                  raise SystemExit(f'Unexpected Git mode {mode!r} at {path!r}')
+              if path != b'.github/workflows/verify-export.yml':
                   files[path] = (mode, oid)
+
+          if receipt not in files:
+              raise SystemExit('Missing reviewed export receipt')
+          _, receipt_oid = files.pop(receipt)
+          if not files:
+              raise SystemExit('Empty export')
 
           # Sort by raw path bytes. Each record is path NUL Git-mode NUL hex-SHA256 LF.
           digest = sha256()
@@ -50,7 +55,7 @@ jobs:
               digest.update(path + b'\0' + mode + b'\0' + sha256(content).hexdigest().encode() + b'\n')
 
           actual = digest.hexdigest()
-          expected = check_output(['git', 'show', b'HEAD:' + receipt])
+          expected = check_output(['git', 'cat-file', 'blob', receipt_oid])
           if expected != (actual + '\n').encode():
               raise SystemExit(f'Export mismatch: {len(files)} files, computed SHA-256 {actual}')
           print(f'Verified {len(files)} files, export SHA-256 {actual}')
