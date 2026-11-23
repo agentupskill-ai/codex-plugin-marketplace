@@ -1,5 +1,10 @@
 name: Verify export
 
+# Before approving a publication, compare its workflow tree to the approved
+# tooling commit outside CI. A PR can edit the workflow reporting this check.
+# git diff --exit-code --no-ext-diff --no-textconv "$tooling_sha" "$publication_sha" -- .github/workflows/
+# Verify the receipt against the independent host export at that same publication SHA.
+
 on:
   pull_request:
     branches: [main]
