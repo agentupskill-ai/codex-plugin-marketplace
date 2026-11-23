@@ -1,0 +1,61 @@
+name: Verify export
+
+# Before approving a publication, compare its workflow tree to the approved
+# tooling commit outside CI. A PR can edit the workflow reporting this check.
+# git diff --exit-code --no-ext-diff --no-textconv "$tooling_sha" "$publication_sha" -- .github/workflows/
+# Verify the receipt against the independent host export at that same publication SHA.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-export:
+    name: Export integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Compare committed payload to the reviewed host export
+        shell: python
+        run: |
+          from hashlib import sha256
+          from subprocess import check_output
+
+          # The operator matches this receipt to the independent host export at review.
+          receipt = b'.github/reviewed-export.sha256'
+          files = {}
+          tree = check_output(['git', 'ls-tree', '-rz', 'HEAD'])
+          for entry in tree.split(b'\0')[:-1]:
+              header, path = entry.split(b'\t', 1)
+              mode, kind, oid = header.split()
+              if mode not in (b'100644', b'100755') or kind != b'blob':
+                  raise SystemExit(f'Unexpected Git mode {mode!r} at {path!r}')
+              if path != b'.github/workflows/verify-export.yml':
+                  files[path] = (mode, oid)
+
+          if receipt not in files:
+              raise SystemExit('Missing reviewed export receipt')
+          _, receipt_oid = files.pop(receipt)
+          if not files:
+              raise SystemExit('Empty export')
+
+          # Sort by raw path bytes. Each record is path NUL Git-mode NUL hex-SHA256 LF.
+          digest = sha256()
+          for path in sorted(files):
+              mode, oid = files[path]
+              content = check_output(['git', 'cat-file', 'blob', oid])
+              digest.update(path + b'\0' + mode + b'\0' + sha256(content).hexdigest().encode() + b'\n')
+
+          actual = digest.hexdigest()
+          expected = check_output(['git', 'cat-file', 'blob', receipt_oid])
+          if expected != (actual + '\n').encode():
+              raise SystemExit(f'Export mismatch: {len(files)} files, computed SHA-256 {actual}')
+          print(f'Verified {len(files)} files, export SHA-256 {actual}')
