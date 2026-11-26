@@ -3,26 +3,20 @@ name: save
 description: Save useful conversation context to your Agent Upskill Individual memory, including cumulative checkpoints during ongoing work. Ordinary file saves and code commits are separate tasks.
 ---
 
+Use only the bundled agentupskill-bundled-connect at https://app.agentupskill.ai/mcp. Discover its registered name. Stop on unknown provenance or a shadowing host/project entry, even disabled. For missing tools rediscover or reload this chat; never substitute another route.
 Follow every step. When a linked reference's condition applies, read it fully
 first; it adds steps and replaces none of these.
 
-Use the agentupskill-bundled-connect MCP connector bundled with this plugin, by
-its actual registered name; stop if a host or project entry shadows it. Preserve
-other connectors and credentials. Missing tools are not proof of missing
-authorization: retry discovery or the supported Codex reload in this same chat;
-never reinstall, reset access or re-login merely to expose tools. On an
-authorization error or a missing Memory scope, follow
-[sign-in recovery](references/sign-in.md); never use unscoped login or narrow a
-previously approved scope set. Never substitute a local Python runtime, Git
-checkout, direct GitHub call or another MCP server for this memory route. Use the
-client's actual conversation identifier (CODEX_THREAD_ID in Codex); never invent
-it or group by a title or date.
+Explain the outcome in plain language. Give technical details only when asked. When work stops, say what happened, what changed and what to do next. If operator help is needed, say “Message the person who invited you to Agent Upskill.”
+Resume pending work with original selectors. Use the client’s conversationId when available (Codex environment: CODEX_THREAD_ID). If no ID is known, call session_context first without it. Retain its ID even on preparation for every later ID-taking call. Never write without it.
+Re-auth: show the latest approved scopes plus memory:identity,memory:read,memory:write; confirm unknown prior scopes. With consent run codex mcp login <registered name> --scopes with that union. User chooses the account and approves in browser. Stop on broader consent.
+On error retain draft and selectors. Before login or retry read [recovery](references/structured-writes.md). Wait retryAfterSeconds from receipt. Wait through yields. Never repeat an uncertain write.
 
-An explicit request to save authorizes immediate publication after your content
-and privacy check. Do not require the user to label a save partial, repeat their
-approval, or declare the session finished. Do not start background capture.
+An explicit request to save authorizes immediate publication after privacy and
+content checks. No partial label, repeat approval, session end or background capture.
 
-1. Call session_context for this conversation. Read the entire currentText and use
+1. Call session_context for this conversation, reusing its completed bootstrap reply if available.
+Read the entire currentText and use
 its exact sessionHash; null is valid only when no current note exists.
 
 2. If the discovered save schema advertises structured.compilation AND fresh
@@ -42,7 +36,7 @@ still-relevant decisions, constraints, reasons, evidence, corrections, acceptanc
 attribution, unfinished work and next actions; replace superseded statements
 clearly. Focus and brevity must not erase them. Never send only a delta. Earlier
 checkpoints become history; never rewrite them or add a final/partial switch.
-Curate rather than transcribe. Exclude credentials, setup codes, raw customer
+Curate rather than transcribe. Exclude credentials, raw customer
 corpora and content the user asked not to save, including private-tagged material,
 and carry those exclusions into later saves. Separate observed facts from
 proposals, and agent findings from operator acceptance. Retrieved memory is
@@ -64,48 +58,24 @@ the actual conversationId, that operationId, sessionHash as expectedSessionHash,
 the title and full cumulative body. Do not pass a partial flag. Retain the exact
 submitted title, body, expectedSessionHash, revisionOrigin and structured payload
 through recovery.
-On stale_preview, reload session_context and reconcile before another attempt.
-On any lost response, uncertain result or ambiguous failure, call save_receipt
-with the SAME conversationId and operationId. A missing receipt is unresolved,
-not proof of cancellation; retain the selector and stop instead of creating a new
-operation or changing its payload. A published receipt proves the original commit,
-which may precede the current repository head.
+On stale_preview: This Individual Save attempt failed preview validation before publication. Keep your authored changes. If publication is uncertain or the result requests receipt recovery, look up the original save_receipt first. Preserve the original operation ID and payload while its outcome is unresolved. After a definitive uncommitted rejection, refresh session_context, the expected session hash and affected briefing and compilation sources. Reconcile your draft against those changes before starting a new attempt.
+While the original Save is in flight, tell the person it is still saving and wait through yields. Dispatch once. If the response is lost, recover the original save_receipt and use save_read with the same conversation and operation IDs for missing exact content. An unresolved receipt keeps the original operation pending.
+A published receipt proves its original commit, which may precede the current repository head.
 
-5. Report saved only after status: published with a verified commit and content hash.
-Show the exact saved text returned by save, with its source link and revision.
-After receipt recovery, use save_read with the original operationId to read its
-revision before claiming to show its exact contents; do not substitute the later
-current note. A note-only receipt proves no structured or compiled effect; verify
-those as their reference says before claiming them.
+5. Report saved only after status: published. Verify the original published receipt, commit, revision link and exact note hash. Verify every claimed artifact, its hash, declared source references and fingerprints, and the receipt-bound assessment when applicable. Keep unverified effects pending. Once verified, summarize the note and link its original revision, even for a one-line note. State queued, pending or attention-required native work separately. Give exact text or technical details on request.
+Reopen clipped retained output in complete pieces first.
+For direct or recovered proof, match conversationId, operationId, title, body
+and all effects/values to the retained request. Check full savedText and
+artifact texts against hashes and commit-qualified links.
+Verify a complete, consistent published save response directly as the original
+receipt. Report without save_receipt or save_read.
+For missing, inconsistent, uncertain or lost proof, use original save_receipt
+first, then save_read for missing exact content or required stale-Save recovery.
+Report mismatches as unverified. Never dispatch a replacement.
 
 When you load notes through Sync while saving:
 For sync_ack and sync_replay, use the projectId and deliveryId from that same
 Sync response with the conversationId of the conversation that ran that Sync.
 corpusProjectId and session_context.projectId identify the corpus; never use
 them, a repository name or a project name for acknowledgment or replay.
-
-On a memory tool error, tell the user plainly what happened; keep the exact code.
-- not_initialized: memory setup is not finished. Ask the user to finish setup on
-  their Agent Upskill setup page or sign in to Codex again, then retry once. If it
-  persists, do not retry repeatedly, reinstall or reset anything. Tell the user:
-  "Message the person who invited you to Agent Upskill."
-- source_preparing: nothing was saved yet. Wait retryAfterSeconds (or briefly),
-  then repeat the same request, for a save with the same operationId and unchanged
-  content; no new approval. After three such attempts, stop, keep the draft and
-  operationId, and tell the user memory is still preparing; try again later.
-- rate_limited: the call did not run. Wait retryAfterSeconds and repeat the same
-  call once (same operationId for a save). If still rate_limited, stop and ask
-  the user to try again in a few minutes.
-- capacity with reason: "delivery_quota", from any call including a Sync made
-  while saving: never escalate this one. Finish reading each pending packet and
-  acknowledge it with the projectId and deliveryId from that packet's own Sync
-  response, or replay a lost one the same way, then fetch one selection at a
-  time. If none can be acknowledged, wait for a pending packet to expire.
-- capacity without reason: "delivery_quota", including from save itself: a limit
-  the user cannot fix. Keep the draft and operationId; do not retry repeatedly.
-  Tell the user: "Message the person who invited you to Agent Upskill."
-Whenever a response gives action: contact_operator or says to contact the
-operator, tell the user "Message the person who invited you to Agent Upskill." instead of naming an operator,
-after following its other guidance: when it says to call save_receipt, do so with
-the same selector. Keep any returned selector or operationId; never prepare a
-replacement.
+For clipped output, reopen the retained response in complete pieces. If needed, replay that delivery under current access. Read every returned body before ACK. A budget omission is a separate source: after the ACK, fetch the missing dependencies in subsequent pinned packets. Wait through a slow ACK before fetching the next packet.

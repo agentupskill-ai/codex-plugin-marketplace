@@ -1,6 +1,48 @@
-# Save: structured items, living documents and orientation
+# Save: recovery and structured writes
 
-Read this before preparing any structured field for Save. It adds to the Save
+## Connection and checkpoint recovery
+
+Follow only the branch for the failed step. Keep the draft, exact inputs, error and selectors.
+Re-authenticate only for expired sign-in or insufficient required access. For missing tools, rediscover the bundled connector or reload this chat.
+A missing tool alone cannot establish a missing grant. Do not reinstall, reset access or re-login merely to expose tools.
+Confirm the latest complete approved scope set from the user or their approval record,
+including any reductions. A prior combined setup used memory:identity,memory:read,memory:write,skills:identity,skills:read,skills:write. Do not infer
+consent from discovery, credentials or an older grant. Never inspect token stores.
+Use only explicit scopes. Never restore withdrawn scopes or use unscoped login. Show the proposed scope union before login. For confirmed first-time Memory-only
+access, use exactly the required Memory scopes. Stop on broader browser consent.
+- not_initialized: memory setup is not finished. Ask the user to finish setup on
+  their Agent Upskill setup page or sign in to Codex again, then retry once. If it
+  persists, do not retry repeatedly, reinstall or reset anything. Tell the user:
+  "Message the person who invited you to Agent Upskill."
+- source_preparing: keep the draft. Wait the full retryAfterSeconds from receipt.
+  Repeat only the read or ACK that was preparing, with that call's own selectors.
+  Retry a Save only if it explicitly returned unstaged, using the same operationId
+  and byte-identical payload. After three preparing attempts, stop and retain the draft
+  and original selector. Report the pending step and suggest resuming it later.
+- rate_limited: the call did not run. Wait retryAfterSeconds and repeat the same
+  call once (same operationId for a save). If still rate_limited, stop and ask
+  the user to try again in a few minutes.
+- capacity with reason: "delivery_quota", from any call including a Sync made
+  while saving: never escalate this one. Finish reading each pending packet and
+  acknowledge it with the projectId and deliveryId from that packet's own Sync
+  response, then fetch one selection at a time. If none can be acknowledged,
+  wait for a pending packet to expire.
+- capacity without reason: "delivery_quota", including from save itself: a limit
+  the user cannot fix. Keep the draft and operationId; do not retry repeatedly.
+  Tell the user: "Message the person who invited you to Agent Upskill."
+Whenever a response gives action: contact_operator or says to contact the
+operator, tell the user "Message the person who invited you to Agent Upskill." instead of naming an operator,
+after following its other guidance: when it says to call save_receipt, do so with
+the same selector. Keep any returned selector or operationId; never prepare a
+replacement.
+
+For stale_delivery on ACK or replay: The packet is stale. Keep your draft and stop queued work at the old commit. Refresh session_context and discovery, then pin a new Sync delivery at the new source commit. Account for every returned document. Reuse a complete, previously read body only after verifying its hash. Read changed, missing or clipped bodies in full. ACK with complete:true using the original conversationId and the projectId and deliveryId from this fresh packet. Reconcile affected briefing and compilation dependencies before continuing.
+
+For stale_delivery on Save: The source or access changed during Save. Publication is uncertain. Keep the original conversation ID, operation ID and exact payload. Call the original save_receipt first. If access needs reconciliation or the receipt is unresolved, keep the operation pending. Once published, verify its original content with save_read before reporting it.
+
+## Structured items, living documents and orientation
+
+Read this section before preparing any structured field for Save. It adds to the Save
 steps; everything in SKILL.md still applies.
 
 Before preparing structured writes, inspect the actually discovered save tool's
@@ -81,6 +123,7 @@ account for every requested item upsert and document create/patch, including the
 requested values and returned IDs/revisions. Verify each savedArtifacts text against
 its contentHash and show the affected items/documents with immutable source links.
 A note-only receipt does not prove requested structured effects. If effects are
-missing or cannot be verified, retain the same operationId and use save_read;
-report the unverified effects without claiming they saved or dispatching a replacement.
+missing or cannot be verified, recover the original save_receipt first.
+For missing exact content, retain the same operationId and use save_read.
+Report unverified effects without claiming they saved or dispatching a replacement.
 One verified published operation proves the note and the structured effects it accounts for.

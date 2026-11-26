@@ -1,12 +1,12 @@
 {
   "name": "up",
-  "version": "0.8.22",
+  "version": "0.9.0",
   "description": "Connect Agent Upskill and carry useful context between Codex conversations.",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "extensions": {
     "com.openai": {
-      "onboardingSkill": "./skills/setup/SKILL.md"
+      "onboardingSkill": "./skills/sync/SKILL.md"
     }
   }
 }

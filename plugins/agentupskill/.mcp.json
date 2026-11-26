@@ -2,7 +2,15 @@
   "mcpServers": {
     "agentupskill-bundled-connect": {
       "type": "http",
-      "url": "https://app.agentupskill.ai/mcp"
+      "url": "https://app.agentupskill.ai/mcp",
+      "scopes": [
+        "memory:identity",
+        "memory:read",
+        "memory:write",
+        "skills:identity",
+        "skills:read",
+        "skills:write"
+      ]
     }
   }
 }
