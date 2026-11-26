@@ -221,8 +221,8 @@ limits on stored outputs. Use adequate supported Sync packet budgets to load and
 verify complete evidence. Never truncate source notes or prune history to fit.
 
 After dispatch, retain the original UUID and EXACT title/body/structured request.
-Any uncertain result uses save_receipt/save_read for that same operation. Verify
-all declared role/key outputs, resolved source references, sourceFingerprint and
+For an uncertain result, follow the Save core's original-receipt recovery
+for that same operation. Verify all declared role/key outputs, resolved source references, sourceFingerprint and
 returned savedArtifacts hashes against the original publication before reporting
 success. For assessed maintenance, also verify the original receipt's assessment
 and its bound artifact effects against the exact submitted assessment; missing or
